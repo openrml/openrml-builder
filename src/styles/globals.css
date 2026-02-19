@@ -1,0 +1,419 @@
+@import "tailwindcss";
+@import "./theme.css";
+
+/* ========== CUSTOM THEME FOR TAILWIND 4.0 ========== */
+@theme {
+  /* ===== ШРИФТЫ ===== */
+  /* Было: Inter (не подключён). Теперь: Plus Jakarta Sans — характерный,
+     читаемый, с нужными весами для UI. Подключён в index.html. */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ===== ЦВЕТОВАЯ ШКАЛА INDIGO → PRIMARY ===== */
+  --color-indigo-50:  oklch(98.5% 0.006 264);
+  --color-indigo-100: oklch(96.2% 0.014 264);
+  --color-indigo-200: oklch(90.8% 0.032 264);
+  --color-indigo-300: oklch(82.6% 0.064 264);
+  --color-indigo-400: oklch(72.5% 0.128 264);
+  --color-indigo-500: oklch(62.3% 0.195 264);
+  --color-indigo-600: oklch(54.8% 0.245 264);   /* #4F46E5 — primary */
+  --color-indigo-700: oklch(47.2% 0.236 265);   /* #4338CA */
+  --color-indigo-800: oklch(39.5% 0.210 266);   /* #3730A3 */
+  --color-indigo-900: oklch(30.2% 0.154 267);   /* #312E81 */
+  --color-indigo-950: oklch(22.5% 0.108 268);   /* #1E1B4B */
+
+  /* ===== ЦВЕТОВАЯ ШКАЛА EMERALD → SECONDARY ===== */
+  --color-emerald-50:  oklch(98.5% 0.033 160);
+  --color-emerald-100: oklch(96.3% 0.052 160);
+  --color-emerald-200: oklch(91.1% 0.078 160);
+  --color-emerald-300: oklch(84.3% 0.111 160);
+  --color-emerald-400: oklch(75.1% 0.152 160);
+  --color-emerald-500: oklch(68.7% 0.179 160);
+  --color-emerald-600: oklch(60.2% 0.178 160);  /* приглушённый secondary */
+  --color-emerald-700: oklch(53.5% 0.168 161);
+  --color-emerald-800: oklch(44.5% 0.148 162);
+  --color-emerald-900: oklch(36.5% 0.122 163);
+  --color-emerald-950: oklch(28.8% 0.095 164);
+
+  /* ===== СЕМАНТИЧЕСКИЕ ЦВЕТА ===== */
+  --color-primary:   var(--color-indigo-600);
+  --color-secondary: var(--color-emerald-600);
+
+  /* ===== SEMANTIC COLORS ===== */
+  --color-success-50: var(--color-emerald-50);
+  --color-error-50:   oklch(98.2% 0.016 17);
+  --color-warning-50: oklch(98.7% 0.038 88);
+  --color-info-50:    oklch(97.5% 0.018 250);
+
+  --color-red-600:    oklch(57.7% 0.245 27);
+  --color-green-600:  oklch(56.5% 0.163 152);
+  --color-blue-600:   oklch(54.8% 0.245 250);
+  --color-yellow-600: oklch(73.7% 0.165 86);
+  --color-purple-600: oklch(54.6% 0.274 310);
+  --color-pink-600:   oklch(57.2% 0.288 2);
+
+  /* ===== RADIUS ===== */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  /* ===== ANIMATION ===== */
+  --animate-fade-in:   fade-in 0.2s ease-out;
+  --animate-fade-out:  fade-out 0.2s ease-in;
+  --animate-scale:     scale 0.15s ease-out;
+  --animate-lift:      lift 0.2s ease-out;
+  --animate-shake:     shake 0.35s ease-in-out;  /* увеличено: 100ms → 350ms */
+  --animate-slide-in:  slide-in 0.25s ease-out;
+  --animate-slide-up:  slide-up 0.2s ease-out;
+}
+
+/* ========== ANIMATIONS ========== */
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes scale {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes lift {
+  0%   {
+    transform: translateY(0);
+    box-shadow: var(--shadow-sm);
+  }
+  100% {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary-md);
+  }
+}
+
+/* ИСПРАВЛЕНО: было 1 итерация 100ms — незаметно.
+   Теперь 350ms с 6 точками — отчётливо, не раздражает */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-5px); }
+  30%       { transform: translateX(5px); }
+  45%       { transform: translateX(-4px); }
+  60%       { transform: translateX(4px); }
+  75%       { transform: translateX(-2px); }
+  88%       { transform: translateX(2px); }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Анимация для step-переходов */
+@keyframes step-enter {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========== BASE STYLES ========== */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Предотвращает мигание при загрузке шрифта */
+    text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    /* ДОБАВЛЕНО: line-height — было ~1.2 браузерный дефолт, теперь 1.55 */
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Plus Jakarta Sans поддерживает cv01, ss01 для чисел */
+    font-feature-settings: "cv01", "ss01", "kern";
+    color: hsl(var(--color-foreground));
+    background-color: hsl(var(--color-background));
+  }
+
+  /* ===== ТИПОГРАФИКА ===== */
+  /* line-height задан с учётом Plus Jakarta Sans */
+  h1 {
+    font-size: 2.25rem;  /* 36px */
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  h2 {
+    font-size: 1.75rem;  /* 28px */
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    font-size: 1.375rem; /* 22px */
+    line-height: 1.3;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  h4 {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    line-height: 1.6;
+  }
+
+  /* Улучшенные текстовые утилиты */
+  .text-large {
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .text-small {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  .text-xsmall {
+    font-size: 0.75rem; /* 12px */
+    line-height: 1.45;
+    font-weight: 400;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+    font-feature-settings: "liga" 0;
+  }
+
+  /* Focus — единый стиль через ring */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--color-ring));
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Улучшаем scroll для горизонтальных контейнеров */
+  .overflow-x-auto {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--color-border)) transparent;
+  }
+}
+
+/* ========== UTILITY CLASSES ========== */
+@layer utilities {
+  /* === Анимации === */
+  .animate-fade-in   { animation: fade-in 0.2s ease-out; }
+  .animate-fade-out  { animation: fade-out 0.2s ease-in; }
+  .animate-scale     { animation: scale 0.15s ease-out; }
+  .animate-lift      { animation: lift 0.2s ease-out forwards; }
+  .animate-shake     { animation: shake 0.35s ease-in-out; }
+  .animate-slide-in  { animation: slide-in 0.25s ease-out; }
+  .animate-slide-up  { animation: slide-up 0.2s ease-out; }
+  .animate-step-enter { animation: step-enter 0.2s ease-out; }
+
+  /* === Градиенты === */
+  .bg-gradient-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--color-primary)) 0%,
+      hsl(var(--color-primary-active)) 100%
+    );
+  }
+
+  .bg-gradient-success {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--color-secondary)) 0%,
+      hsl(var(--color-secondary-active)) 100%
+    );
+  }
+
+  /* Subtle gradient для секций конструктора */
+  .bg-gradient-step {
+    background: linear-gradient(
+      160deg,
+      hsl(var(--gradient-from)) 0%,
+      hsl(var(--gradient-via)) 50%,
+      hsl(var(--gradient-to)) 100%
+    );
+  }
+
+  /* === Glass === */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  [data-theme="dark"] .glass {
+    background: rgba(24, 29, 39, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* === Text gradients === */
+  .text-gradient-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--color-primary)) 0%,
+      oklch(62% 0.22 280) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* === Тени === */
+  .shadow-xs      { box-shadow: var(--shadow-xs); }
+  .shadow-sm      { box-shadow: var(--shadow-sm); }
+  .shadow-md      { box-shadow: var(--shadow-md); }
+  .shadow-lg      { box-shadow: var(--shadow-lg); }
+  .shadow-primary { box-shadow: var(--shadow-primary-md); }
+
+  /* === Контейнер === */
+  .container-responsive {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* === Карточки конструктора === */
+  /* Лёгкая primary-border при hover — обозначает интерактивность */
+  .card-constructor {
+    background: hsl(var(--color-card));
+    border: 1.5px solid hsl(var(--color-border));
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 200ms ease, border-color 200ms ease;
+  }
+
+  .card-constructor:hover {
+    box-shadow: var(--shadow-primary-md);
+    border-color: hsl(var(--color-primary) / 0.3);
+  }
+
+  /* === Card hover (generic) === */
+  .card-hover {
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-primary-md);
+  }
+
+  /* === Кнопки === */
+  .btn-hover {
+    transition: all 150ms ease;
+  }
+
+  .btn-hover:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-hover:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* === Step navigation — активный шаг с depth === */
+  .step-nav-active {
+    box-shadow: 0 2px 8px 0 rgba(79, 70, 229, 0.25);
+  }
+
+  /* === Состояния полей ввода === */
+  .input-error {
+    border-color: hsl(var(--color-destructive) / 0.6);
+    animation: shake 0.35s ease-in-out;
+  }
+
+  .input-error:focus {
+    outline-color: hsl(var(--color-destructive));
+    border-color: hsl(var(--color-destructive));
+  }
+
+  .input-success {
+    border-color: hsl(var(--color-success) / 0.6);
+  }
+
+  .input-success:focus {
+    outline-color: hsl(var(--color-success));
+  }
+
+  /* === focus-within для field groups === */
+  .field-group:focus-within label {
+    color: hsl(var(--color-primary));
+    transition: color 150ms ease;
+  }
+
+  /* === Scrollbar styling === */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--color-border)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--color-border));
+    border-radius: 999px;
+  }
+
+  /* === Улучшенный progress bar === */
+  /* Заменяем стандартный на градиентный с primary */
+  .progress-primary {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--color-primary)) 0%,
+      oklch(68% 0.21 280) 100%
+    );
+    border-radius: 999px;
+    transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

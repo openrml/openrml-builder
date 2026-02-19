@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- SEO -->
+    <title>RolesAI — AI Role Constructor | Create RML Roles Visually</title>
+    <meta name="description" content="Create personalized AI assistant roles with our intuitive 8-step builder. Export to RML format for Claude, ChatGPT, Gemini and any LLM. Free and open-source." />
+    <meta name="keywords" content="ai, rml, role markup language, llm, claude, chatgpt, prompt engineering, ai assistant, constructor" />
+    <meta name="author" content="RolesAI.Life Team" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://rolesai.life" />
+
+    <!-- PWA -->
+    <meta name="application-name" content="RolesAI" />
+    <meta name="theme-color" content="#4F46E5" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#4F46E5" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="RolesAI" />
+    <meta name="msapplication-TileColor" content="#4F46E5" />
+    <meta name="msapplication-tap-highlight" content="no" />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-192.png" />
+
+    <!-- Apple Splash Screens (iPhone) -->
+    <link rel="apple-touch-startup-image" href="/icons/splash-1170x2532.png"
+      media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/icons/splash-1125x2436.png"
+      media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/icons/splash-828x1792.png"
+      media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="RolesAI — AI Role Constructor" />
+    <meta property="og:description" content="Visual 8-step builder for creating AI roles in Open RML format" />
+    <meta property="og:image" content="https://rolesai.life/og-image.png" />
+    <meta property="og:url" content="https://rolesai.life" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="RolesAI.Life" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RolesAI — AI Role Constructor" />
+    <meta name="twitter:description" content="Create AI roles visually with 8-step builder. Export to RML for any LLM." />
+    <meta name="twitter:image" content="https://rolesai.life/og-image.png" />
+
+    <!-- AI Bots -->
+    <meta name="GPTBot" content="index, follow" />
+    <meta name="anthropic-ai" content="index, follow" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "RolesAI — AI Role Constructor",
+      "applicationCategory": "ProductivityApplication",
+      "operatingSystem": "Web Browser, iOS, Android",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Visual constructor for creating AI roles in Open RML format. 8-step builder with support for multiple categories and multilingual interface.",
+      "creator": {
+        "@type": "Organization",
+        "name": "RolesAI.Life",
+        "url": "https://rolesai.life"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <div style="padding: 2rem; font-family: system-ui;">
+        <h1>RolesAI — AI Role Constructor</h1>
+        <p>Create personalized AI assistant roles with our intuitive 8-step builder.</p>
+        <ul>
+          <li>8-step visual wizard</li>
+          <li>Open RML format import/export</li>
+          <li>8 life categories (Health, Productivity, Finance, etc.)</li>
+          <li>Multilingual support (EN/UA/RU)</li>
+          <li>Dark/Light themes</li>
+          <li>Works offline as installed app</li>
+        </ul>
+        <p>Please enable JavaScript to use the application.</p>
+      </div>
+    </noscript>
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
