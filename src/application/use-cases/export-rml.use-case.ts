@@ -1,10 +1,12 @@
 // src/application/use-cases/export-rml.use-case.ts
 import { Role } from '../../core/domain/role/types';
 import { exportRoleToText, downloadRole } from '../../core/rml/exporter';
+import type { Language } from '../../core/domain/role/enum-display-names';
 
 export interface ExportRMLInput {
   role: Role;
   download?: boolean;
+  language?: Language;  // Optional language override
 }
 
 export interface ExportRMLOutput {
@@ -31,11 +33,11 @@ export class ExportRMLUseCase {
       })) || []
     };
     
-    const content = exportRoleToText(roleToExport);
+    const content = exportRoleToText(roleToExport, input.language);
     const fileName = `${roleToExport.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_role.rml.txt`;
     
     if (input.download) {
-      downloadRole(roleToExport);
+      downloadRole(roleToExport, input.language);
     }
     
     return { 

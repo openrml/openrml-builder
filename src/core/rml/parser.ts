@@ -19,6 +19,7 @@ import { createEmptyRole } from '../services/role-factory';
 import { rmlIdentityService } from '../services/identity.service';
 import { LicenseService } from '../services/license.service';
 import { FEATURES } from '../../config/features';
+import { getEnumReverseMap } from '../domain/role/enum-display-names';
 
 export interface ImportResult {
   role: Role;
@@ -36,7 +37,10 @@ function validateEnum<T extends string>(
   value: string, 
   validValues: readonly T[], 
   defaultValue: T,
-  fieldName: string
+  fieldName: string,
+  enumType?: 'archetype' | 'roleType' | 'visualStyle' | 'environment' | 
+             'imageStyle' | 'lighting' | 'tone' | 'emotionalRange' | 
+             'memoryStrategy' | 'category' | 'status'
 ): { value: T; warning?: string } {
   if (!value || value.trim() === '') {
     return { 
@@ -45,12 +49,32 @@ function validateEnum<T extends string>(
     };
   }
 
-  const normalized = value.toLowerCase().trim() as T;
+  let normalized = value.toLowerCase().trim();
   
-  if (validValues.includes(normalized)) {
-    return { value: normalized };
+  // Handle dual format: "DisplayName (value)" -> extract "value"
+  const dualFormatMatch = normalized.match(/\(([^)]+)\)$/);
+  if (dualFormatMatch) {
+    normalized = dualFormatMatch[1].trim();
+  }
+  
+  // Direct match
+  if (validValues.includes(normalized as T)) {
+    return { value: normalized as T };
   }
 
+  // Try enum reverse mapping if enumType provided
+  if (enumType) {
+    const reverseMap = getEnumReverseMap(enumType);
+    const mappedValue = reverseMap[normalized];
+    if (mappedValue && validValues.includes(mappedValue as T)) {
+      return { 
+        value: mappedValue as T,
+        warning: `Field "${fieldName}": "${value}" converted to "${mappedValue}"`
+      };
+    }
+  }
+
+  // Partial match
   for (const validValue of validValues) {
     if (normalized.includes(validValue) || validValue.includes(normalized)) {
       return { 
@@ -60,6 +84,7 @@ function validateEnum<T extends string>(
     }
   }
 
+  // Legacy Russian translations (kept for backward compatibility)
   const ruTranslations: Record<string, string> = {
     'эмпатичный': 'empathetic',
     'профессиональный': 'professional',
@@ -454,7 +479,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step1, 'Status'),
       ['draft', 'published'] as const,
       'draft',
-      'Status'
+      'Status',
+      'status'
     );
     role.status = statusResult.value;
     if (statusResult.warning) warnings.push(statusResult.warning);
@@ -465,7 +491,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step1, 'Category'),
       ['health', 'productivity', 'daily', 'finance', 'relationships', 'development', 'technology', 'entertainment'] as const,
       'productivity',
-      'Category'
+      'Category',
+      'category'
     );
     role.category = categoryResult.value;
     if (categoryResult.warning) warnings.push(categoryResult.warning);
@@ -474,7 +501,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step1, 'Archetype'),
       ['mentor', 'creator', 'analyst', 'healer', 'scientist', 'leader', 'explorer', 'guardian'] as const,
       'mentor',
-      'Archetype'
+      'Archetype',
+      'archetype'
     );
     role.archetype = archetypeResult.value;
     if (archetypeResult.warning) warnings.push(archetypeResult.warning);
@@ -483,7 +511,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step1, 'Role Type'),
       ['professional', 'personal', 'educational', 'creative'] as const,
       'professional',
-      'Role Type'
+      'Role Type',
+      'roleType'
     );
     role.roleType = roleTypeResult.value;
     if (roleTypeResult.warning) warnings.push(roleTypeResult.warning);
@@ -504,7 +533,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step2, 'Visual Style'),
       ['professional', 'casual', 'creative', 'academic'] as const,
       'professional',
-      'Visual Style'
+      'Visual Style',
+      'visualStyle'
     );
     role.visualStyle = visualStyleResult.value;
     if (visualStyleResult.warning) warnings.push(visualStyleResult.warning);
@@ -516,7 +546,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step2, 'Environment'),
       ['office', 'hospital', 'business', 'library', 'studio', 'home', 'digital'] as const,
       'office',
-      'Environment'
+      'Environment',
+      'environment'
     );
     role.environment = environmentResult.value;
     if (environmentResult.warning) warnings.push(environmentResult.warning);
@@ -527,7 +558,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step2, 'Image Style'),
       ['portrait', 'professional', 'illustration', 'digital-art'] as const,
       'professional',
-      'Image Style'
+      'Image Style',
+      'imageStyle'
     );
     role.imageStyle = imageStyleResult.value;
     if (imageStyleResult.warning) warnings.push(imageStyleResult.warning);
@@ -536,7 +568,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step2, 'Lighting'),
       ['natural', 'studio', 'soft', 'dramatic'] as const,
       'natural',
-      'Lighting'
+      'Lighting',
+      'lighting'
     );
     role.lighting = lightingResult.value;
     if (lightingResult.warning) warnings.push(lightingResult.warning);
@@ -550,7 +583,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step3, 'Base Tone') || parseKeyValue(step3, 'Tone'),
       ['professional', 'friendly', 'formal', 'informal', 'empathetic', 'enthusiastic'] as const,
       'professional',
-      'Tone'
+      'Tone',
+      'tone'
     );
     role.tone = toneResult.value;
     if (toneResult.warning) warnings.push(toneResult.warning);
@@ -559,7 +593,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step3, 'Emotional Range'),
       ['minimal', 'moderate', 'expressive'] as const,
       'moderate',
-      'Emotional Range'
+      'Emotional Range',
+      'emotionalRange'
     );
     role.emotionalRange = emotionalRangeResult.value;
     if (emotionalRangeResult.warning) warnings.push(emotionalRangeResult.warning);
@@ -706,7 +741,8 @@ export function parseRMLRole(raw: string): ImportResult {
       parseKeyValue(step7, 'Memory Strategy'),
       ['semantic', 'chronological', 'importance', 'emotional'] as const,
       'semantic',
-      'Memory Strategy'
+      'Memory Strategy',
+      'memoryStrategy'
     );
     role.memoryStrategy = memoryStrategyResult.value;
     if (memoryStrategyResult.warning) warnings.push(memoryStrategyResult.warning);

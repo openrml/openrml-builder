@@ -14,6 +14,9 @@ import { Progress } from '../ui/progress';
 import { Button } from '../ui/button';
 import { ChevronLeft, ChevronRight, Save, FileDown, FileUp, Home, Check, AlertTriangle, Menu, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { detectRoleLanguage } from '../../../lib/utils/language-detection';
+import { LanguageBadge } from '../ui/language-badge';
+import type { Language } from '../../../core/domain/role/enum-display-names';
 
 // Импортируем шаги
 import { Step1Base } from './steps/Step1Base';
@@ -39,6 +42,16 @@ export const Constructor: React.FC = () => {
   const [importResult, setImportResult]   = useState<ImportRMLOutputV2 | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showPreview, setShowPreview]     = useState(window.innerWidth > 1024);
+  
+  // Language detection
+  const [detectedLanguage, setDetectedLanguage] = useState<Language>('en');
+  const [exportLanguage, setExportLanguage] = useState<Language | 'auto'>('auto');
+  
+  // Detect language when role content changes
+  React.useEffect(() => {
+    const detected = detectRoleLanguage(currentRole);
+    setDetectedLanguage(detected);
+  }, [currentRole.name, currentRole.description, currentRole.greeting]);
 
   const totalSteps = 8;
   const progress   = (currentStep / totalSteps) * 100;
@@ -88,7 +101,12 @@ export const Constructor: React.FC = () => {
 
   const handleExport = () => {
     const useCase = new ExportRMLUseCase();
-    useCase.execute({ role: currentRole, download: true });
+    const langToUse = exportLanguage === 'auto' ? detectedLanguage : exportLanguage;
+    useCase.execute({ 
+      role: currentRole, 
+      download: true,
+      language: langToUse
+    });
     toast.success(`${t('roleExported') || 'Role exported'}: ${currentRole.name}`);
   };
 
@@ -206,8 +224,13 @@ export const Constructor: React.FC = () => {
               </Button>
             </div>
 
-            <div className="text-xs sm:text-sm font-medium text-[hsl(var(--color-muted-foreground))]">
-              {t('step') || 'Step'} {currentStep} {t('of') || 'of'} {totalSteps}
+            <div className="flex items-center gap-2">
+              {/* Language Badge */}
+              <LanguageBadge language={detectedLanguage} />
+              
+              <div className="text-xs sm:text-sm font-medium text-[hsl(var(--color-muted-foreground))]">
+                {t('step') || 'Step'} {currentStep} {t('of') || 'of'} {totalSteps}
+              </div>
             </div>
 
             <div className="flex gap-1 sm:gap-2">

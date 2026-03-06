@@ -1,8 +1,18 @@
 // src/core/rml/exporter.ts
 import { Role } from '../domain/role/types';
+import { LicenseService } from '../services/license.service';
+import { formatEnumForExport, type Language } from '../domain/role/enum-display-names';
+import { detectRoleLanguage, getLanguageName } from '../../lib/utils/language-detection';
 
-export const exportRoleToText = (role: Role): string => {
+export class RMLExporter {
+  private licenseService = new LicenseService();
+}
+
+export const exportRoleToText = (role: Role, exportLanguage?: Language): string => {
+  // Auto-detect language if not specified
+  const language = exportLanguage || detectRoleLanguage(role);
   const sections: string[] = [];
+  const licenseService = new LicenseService();
 
 // ========== ACTIVATION INSTRUCTIONS ==========
 sections.push('Activate role from RML below:');
@@ -20,6 +30,17 @@ sections.push('READY. Starting:');
 sections.push('');
   // ================================================
 
+  // ========== METADATA COMMENTS ==========
+  if (language !== 'en') {
+    sections.push(`# 🌐 LANGUAGE: ${language.toUpperCase()}`);
+    sections.push(`# Primary content language: ${getLanguageName(language)}`);
+    sections.push(`# User content fields are in ${getLanguageName(language)}`);
+    sections.push(`# Structural labels remain in English for parser compatibility`);
+    sections.push(`# Generated: ${new Date().toISOString().split('T')[0]}`);
+    sections.push('');
+  }
+  // ==========================================
+
   sections.push('═══════════════════════════════════════════════════');
   
   // 🆕 RML IDENTITY BLOCK
@@ -29,23 +50,24 @@ sections.push('');
     if (role.rmlIdentity.reference) {
       sections.push(`REFERENCE: ${role.rmlIdentity.reference}`);
     }
-    sections.push(`ARCHETYPE: ${role.archetype || 'mentor'}`);
-    sections.push(`CATEGORY: ${role.category || 'productivity'}`);
-    sections.push(`STATUS: ${role.status || 'draft'}`);
+    sections.push(`ARCHETYPE: ${formatEnumForExport('archetype', role.archetype || 'mentor', language)}`);
+    sections.push(`CATEGORY: ${formatEnumForExport('category', role.category || 'productivity', language)}`);
+    sections.push(`STATUS: ${formatEnumForExport('status', role.status || 'draft', language)}`);
     sections.push(`AUTHOR: ${role.author || 'anonymous'}`);
     sections.push(`CREATED: ${role.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0]}`);
     sections.push(`UPDATED: ${role.updatedAt?.split('T')[0] || new Date().toISOString().split('T')[0]}`);
     sections.push('═══════════════════════════════════════════════════');
     sections.push('');
     
+    // ✅ FIX #6: STEP 1 должен содержать ВСЕ поля, даже при наличии Identity
     sections.push('📋 STEP 1: BASE INFORMATION');
     sections.push('─────────────────────────────────────────────────');
     sections.push(`Role Name: ${role.name}`);
-    sections.push(`Status: ${role.status || 'draft'}`);
+    sections.push(`Status: ${formatEnumForExport('status', role.status || 'draft', language)}`);
     sections.push(`Version: ${role.version || '1.0.0'}`);
-    sections.push(`Category: ${role.category || 'productivity'}`);
-    sections.push(`Archetype: ${role.archetype}`);
-    sections.push(`Role Type: ${role.roleType}`);
+    sections.push(`Category: ${formatEnumForExport('category', role.category || 'productivity', language)}`);
+    sections.push(`Archetype: ${formatEnumForExport('archetype', role.archetype, language)}`);
+    sections.push(`Role Type: ${formatEnumForExport('roleType', role.roleType, language)}`);
     sections.push(`Description: ${role.description}`);
     sections.push(`Main Goal: ${role.mainGoal}`);
     sections.push(`Response Length: ${role.responseLength}/7`);
@@ -55,18 +77,20 @@ sections.push('');
     }
     sections.push('');
   } else {
+    // Старый формат для обратной совместимости
     sections.push(`RML ${role.version || '1.0.0'} — ${role.name} [${role.status || 'draft'}]`);
     sections.push('═══════════════════════════════════════════════════');
     sections.push('');
     
+    // Step 1: Base Information
     sections.push('📋 STEP 1: BASE INFORMATION');
     sections.push('─────────────────────────────────────────────────');
     sections.push(`Role Name: ${role.name}`);
-    sections.push(`Status: ${role.status || 'draft'}`);
+    sections.push(`Status: ${formatEnumForExport('status', role.status || 'draft', language)}`);
     sections.push(`Version: ${role.version || '1.0.0'}`);
-    sections.push(`Category: ${role.category || 'productivity'}`);
-    sections.push(`Archetype: ${role.archetype}`);
-    sections.push(`Role Type: ${role.roleType}`);
+    sections.push(`Category: ${formatEnumForExport('category', role.category || 'productivity', language)}`);
+    sections.push(`Archetype: ${formatEnumForExport('archetype', role.archetype, language)}`);
+    sections.push(`Role Type: ${formatEnumForExport('roleType', role.roleType, language)}`);
     sections.push(`Description: ${role.description}`);
     sections.push(`Main Goal: ${role.mainGoal}`);
     sections.push(`Response Length: ${role.responseLength}/7`);
@@ -81,21 +105,21 @@ sections.push('');
   sections.push('🎨 STEP 2: VISUAL PORTRAIT');
   sections.push('─────────────────────────────────────────────────');
   sections.push(`Age: ${role.age}`);
-  sections.push(`Visual Style: ${role.visualStyle}`);
+  sections.push(`Visual Style: ${formatEnumForExport('visualStyle', role.visualStyle, language)}`);
   sections.push(`Key Details: ${role.visualDetails}`);
   sections.push(`Visual Accent: ${role.visualAccent}`);
-  sections.push(`Environment: ${role.environment}`);
+  sections.push(`Environment: ${formatEnumForExport('environment', role.environment, language)}`);
   sections.push(`Atmosphere: ${role.atmosphere}`);
-  sections.push(`Image Style: ${role.imageStyle}`);
-  sections.push(`Lighting: ${role.lighting}`);
+  sections.push(`Image Style: ${formatEnumForExport('imageStyle', role.imageStyle, language)}`);
+  sections.push(`Lighting: ${formatEnumForExport('lighting', role.lighting, language)}`);
   sections.push('');
 
   // Step 3: Behavior
   sections.push('💬 STEP 3: BEHAVIOR & TONE');
   sections.push('─────────────────────────────────────────────────');
   sections.push(`Greeting: ${role.greeting}`);
-  sections.push(`Base Tone: ${role.tone}`);
-  sections.push(`Emotional Range: ${role.emotionalRange}`);
+  sections.push(`Base Tone: ${formatEnumForExport('tone', role.tone, language)}`);
+  sections.push(`Emotional Range: ${formatEnumForExport('emotionalRange', role.emotionalRange, language)}`);
   sections.push('');
   sections.push('Personality Traits:');
   sections.push(`  Creativity: ${role.personality.creativity}/10`);
@@ -166,6 +190,7 @@ sections.push('');
     sections.push('');
   }
 
+  // ✅ FIX #4: Journey Pacing ПОСЛЕ sessions
   if (role.journeyPacing) {
     sections.push('⏱️ JOURNEY PACING');
     sections.push('─────────────────────────────────────────────────');
@@ -178,6 +203,7 @@ sections.push('');
     sections.push('');
   }
 
+  // ✅ FIX #1: STEP 6 ВСЕГДА присутствует (даже если команда не используется)
   sections.push('👥 STEP 6: TEAM COLLABORATION');
   sections.push('─────────────────────────────────────────────────');
   
@@ -202,6 +228,7 @@ sections.push('');
       sections.push('');
     }
   } else {
+    // ✅ ВАЖНО: Выводим заглушку даже если команда не используется
     sections.push('Team Enabled: No');
     sections.push('Orchestrator: N/A');
     sections.push('');
@@ -217,7 +244,7 @@ sections.push('');
   sections.push(`Hot Memory: ${role.hotMemory}`);
   sections.push(`Warm Memory: ${role.warmMemory}`);
   sections.push(`Cold Memory: ${role.coldMemory}`);
-  sections.push(`Memory Strategy: ${role.memoryStrategy}`);
+  sections.push(`Memory Strategy: ${formatEnumForExport('memoryStrategy', role.memoryStrategy, language)}`);
   sections.push('');
   
   if (role.emotionalStates.length > 0) {
@@ -257,12 +284,14 @@ sections.push('');
   sections.push(`Disclaimer: ${role.disclaimer}`);
   sections.push('');
   
+  // ✅ FIX #2: LICENSE DETAILS - отдельная секция с явным заголовком
   if (role.license) {
     sections.push('📜 LICENSE DETAILS');
     sections.push('─────────────────────────────────────────────────');
     sections.push(`License Type: ${role.license.type}`);
     sections.push('');
     
+    // Генерируем читаемый текст лицензии (БЕЗ галочек ✓)
     const terms = role.license.terms;
     const licenseLines: string[] = [];
     
@@ -310,12 +339,22 @@ sections.push('');
   sections.push(`Created: ${new Date(role.createdAt).toLocaleDateString()}`);
   sections.push(`Updated: ${new Date(role.updatedAt).toLocaleDateString()}`);
   sections.push('═══════════════════════════════════════════════════');
+  
+  sections.push('');
+sections.push('🌐 OpenRML Ecosystem');
+sections.push('─────────────────────────────────────────────────');
+sections.push('🛠️  Constructor: rolesai.life — create your own .rml.txt');
+sections.push('🎭 Gallery: FromUA.life — explore roles & demos');
+sections.push('');
+sections.push('OpenRML — open standard for AI role definitions');
+sections.push('═══════════════════════════════════════════════════');
+
 
   return sections.join('\n');
 };
 
-export const downloadRole = (role: Role): void => {
-  const content = exportRoleToText(role);
+export const downloadRole = (role: Role, language?: Language): void => {
+  const content = exportRoleToText(role, language);
   const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
