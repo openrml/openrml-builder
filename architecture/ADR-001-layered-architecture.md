@@ -2,13 +2,14 @@
 
 **Status:** Accepted  
 **Date:** 2026-02-19  
+**Updated:** 2026-03-10 (OpenRML rebranding)  
 **Deciders:** Core maintainers
 
 ---
 
 ## Context
 
-RML is a specification, not just an application. The reference implementation must demonstrate that the core logic is portable — usable in contexts beyond a React SPA. This requires a clear separation between the specification boundary, business logic, and presentation.
+OpenRML is a specification, not just an application. The reference implementation must demonstrate that the core logic is portable — usable in contexts beyond a React SPA. This requires a clear separation between the specification boundary, business logic, and presentation.
 
 ## Decision
 
@@ -41,3 +42,9 @@ infrastructure → application → core → (nothing)
 ## Enforcement
 
 TypeScript path aliases are configured to make violations visible. Future tooling (e.g., `dependency-cruiser`) should be added to CI to enforce layer boundaries automatically.
+
+---
+
+## OpenRML Migration Note
+
+**Updated in v0.9.0:** Project renamed from RML to OpenRML. Core architectural principles remain unchanged. All references to "RML" in code comments and documentation should be updated to "OpenRML" or "ORML" (for technical identifiers).

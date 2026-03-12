@@ -1,38 +1,39 @@
-# ADR-003: IndexedDB для хранения ролей, localStorage для настроек
+# ADR-003: IndexedDB for Roles, localStorage for Settings
 
-**Статус:** Принято  
-**Дата:** 2026-02-19  
-**Авторы:** Основные контрибьюторы
-
----
-
-## Контекст
-
-Приложение работает полностью на стороне клиента — серверного хранилища нет и, согласно принципу локальности данных (см. `FOUNDATION.md`), быть не должно. Все данные пользователя хранятся в браузере.
-
-В браузере доступно несколько механизмов хранения:
-
-| Механизм | Синхронный | Лимит | Транзакции | Устойчивость |
-|----------|-----------|-------|-----------|--------------|
-| `localStorage` | Да | ~5–10 МБ | Нет | Средняя |
-| `sessionStorage` | Да | ~5–10 МБ | Нет | Только до закрытия вкладки |
-| `IndexedDB` | Нет (async) | Сотни МБ+ | Да | Высокая |
-| `Cache API` | Нет (async) | Зависит от квоты | Нет | Средняя |
-
-Нужно было выбрать, где хранить:
-1. **Роли** — основные пользовательские данные (сложные объекты, могут быть десятки и больше)
-2. **Настройки** — язык интерфейса, тема (плоские примитивы, меняются редко)
-3. **Кеш шаблонов** — предзагруженные шаблоны для Dashboard (временные, не пользовательские)
+**Status:** Accepted  
+**Date:** 2026-02-19  
+**Updated:** 2026-03-10 (Translated to English, OpenRML rebranding)  
+**Deciders:** Core maintainers
 
 ---
 
-## Решение
+## Context
 
-**Роли → IndexedDB** (`openrml-roles-db`)  
-**Настройки → localStorage** (`openrml-settings`)  
-**Кеш шаблонов → sessionStorage** (`openrml-template-cache`)
+The application runs entirely on the client side — there is no server-side storage and, according to the data locality principle (see `FOUNDATION.md`), there should not be. All user data is stored in the browser.
 
-Реализовано через `CompositeStorageAdapter`, который инкапсулирует логику выбора хранилища:
+Several storage mechanisms are available in the browser:
+
+| Mechanism | Synchronous | Limit | Transactions | Durability |
+|-----------|------------|-------|--------------|-----------|
+| `localStorage` | Yes | ~5–10 MB | No | Medium |
+| `sessionStorage` | Yes | ~5–10 MB | No | Only until tab close |
+| `IndexedDB` | No (async) | Hundreds of MB+ | Yes | High |
+| `Cache API` | No (async) | Depends on quota | No | Medium |
+
+We needed to decide where to store:
+1. **Roles** — primary user data (complex objects, potentially dozens or more)
+2. **Settings** — UI language, theme (flat primitives, rarely changed)
+3. **Template cache** — preloaded templates for Dashboard (temporary, not user data)
+
+---
+
+## Decision
+
+**Roles → IndexedDB** (`openrml-roles-db`)  
+**Settings → localStorage** (`openrml-settings`)  
+**Template cache → sessionStorage** (`openrml-template-cache`)
+
+Implemented via `CompositeStorageAdapter`, which encapsulates storage selection logic:
 
 ```typescript
 export class CompositeStorageAdapter implements StoragePort {
@@ -44,112 +45,118 @@ export class CompositeStorageAdapter implements StoragePort {
 
 ---
 
-## Почему IndexedDB для ролей
+## Why IndexedDB for Roles
 
-### 1. Объём данных
+### 1. Data Volume
 
-Полная роль с 8 шагами, сессиями, этическими правилами и лицензией — это несколько килобайт JSON. При библиотеке в 50–100 ролей суммарный объём легко превышает 500 КБ. localStorage имеет лимит ~5–10 МБ в зависимости от браузера и домена, и этот лимит общий для всего сайта. При агрессивном использовании (большие библиотеки ролей, длинные описания сессий) лимит достижим.
+A full role with 8 steps, sessions, ethical rules, and license is several kilobytes of JSON. With a library of 50–100 roles, total size easily exceeds 500 KB. localStorage has a limit of ~5–10 MB depending on browser and domain, and this limit is shared across the entire site. With aggressive usage (large role libraries, long session descriptions), the limit is reachable.
 
-IndexedDB не имеет жёсткого фиксированного лимита — браузер управляет квотой динамически, типично 50%+ доступного дискового пространства.
+IndexedDB has no hard fixed limit — the browser manages quota dynamically, typically 50%+ of available disk space.
 
-### 2. Устойчивость к очистке браузера
+### 2. Resistance to Browser Cleanup
 
-localStorage и IndexedDB ведут себя по-разному при различных сценариях очистки:
+localStorage and IndexedDB behave differently under various cleanup scenarios:
 
-| Сценарий | localStorage | IndexedDB |
+| Scenario | localStorage | IndexedDB |
 |----------|-------------|-----------|
-| Очистка кук | Сохраняется | Сохраняется |
-| «Очистить данные сайта» | Удаляется | Удаляется |
-| Режим инкогнито | Изолирован | Изолирован |
-| ITP (Safari) агрессивная очистка | **Удаляется через 7 дней без визита** | Более устойчив |
-| PWA установлено | Общий с браузером | Общий с браузером |
+| Cookie cleanup | Preserved | Preserved |
+| "Clear site data" | Deleted | Deleted |
+| Incognito mode | Isolated | Isolated |
+| ITP (Safari) aggressive cleanup | **Deleted after 7 days without visit** | More resilient |
+| PWA installed | Shared with browser | Shared with browser |
 
-Safari с включённым Intelligent Tracking Prevention исторически агрессивнее очищает localStorage для сайтов без регулярных визитов. IndexedDB в контексте установленного PWA устойчивее к этой очистке.
+Safari with Intelligent Tracking Prevention historically cleans localStorage more aggressively for sites without regular visits. IndexedDB in the context of an installed PWA is more resilient to this cleanup.
 
-### 3. Транзакционность
+### 3. Transactionality
 
-`LocalStorageAdapter.save()` — это синхронный `localStorage.setItem()`, завёрнутый в async-обёртку для совместимости с `StoragePort`. Атомарности нет: если сохранение прерывается (закрытие браузера в момент записи), данные могут оказаться в частично записанном состоянии.
+`LocalStorageAdapter.save()` is a synchronous `localStorage.setItem()` wrapped in an async wrapper for `StoragePort` compatibility. There is no atomicity: if saving is interrupted (browser closure during write), data may end up in a partially written state.
 
-`IndexedDBAdapter.save()` использует транзакцию `IDBTransaction` в режиме `readwrite`. Транзакция либо применяется полностью, либо откатывается — роль никогда не окажется в повреждённом состоянии.
+`IndexedDBAdapter.save()` uses an `IDBTransaction` in `readwrite` mode. The transaction either applies completely or rolls back — a role will never end up in a corrupted state.
 
 ```typescript
-// IndexedDB — транзакционно
+// IndexedDB — transactional
 const transaction = db.transaction([this.storeName], 'readwrite');
 const store = transaction.objectStore(this.storeName);
-store.put(item); // откатится целиком при ошибке
+store.put(item); // rolls back entirely on error
 ```
 
-### 4. Структура данных
+### 4. Data Structure
 
-localStorage — это хранилище строк: `key → string`. Для хранения объектов необходим `JSON.stringify` при записи и `JSON.parse` при чтении каждый раз. `LocalStorageAdapter.getAll()` итерирует по всем ключам хранилища в поиске ключей с нужным префиксом — O(n) по общему числу ключей в localStorage всего сайта.
+localStorage is a string store: `key → string`. Storing objects requires `JSON.stringify` on write and `JSON.parse` on read every time. `LocalStorageAdapter.getAll()` iterates through all storage keys looking for keys with the right prefix — O(n) over the total number of keys in localStorage for the entire site.
 
-IndexedDB — это объектное хранилище с keyPath. Роли хранятся как структурированные объекты, `getAll()` — это нативная операция object store, не итерация строк.
+IndexedDB is an object store with keyPath. Roles are stored as structured objects, `getAll()` is a native object store operation, not string iteration.
 
 ```typescript
-// localStorage — O(n) итерация по всем ключам
+// localStorage — O(n) iteration over all keys
 for (let i = 0; i < localStorage.length; i++) {
   const key = localStorage.key(i);
   if (key?.startsWith(this.prefix)) { ... }
 }
 
-// IndexedDB — нативный getAll()
-const request = store.getAll(); // O(1) запрос
+// IndexedDB — native getAll()
+const request = store.getAll(); // O(1) request
 ```
 
 ---
 
-## Почему localStorage для настроек
+## Why localStorage for Settings
 
-Настройки (язык, тема) — это два-три примитивных значения. Для них IndexedDB избыточен:
+Settings (language, theme) are two or three primitive values. IndexedDB is overkill for them:
 
-- Async API IndexedDB добавляет задержку при инициализации — тема должна примениться до первого рендера, иначе будет мерцание (FOUC)
-- Синхронный `localStorage.getItem()` читается мгновенно при старте приложения
-- Объём — несколько байт, лимиты localStorage нерелевантны
-- Транзакционность не нужна — потеря настройки темы при сбое не критична
+- IndexedDB's async API adds latency at initialization — theme must apply before first render, otherwise there will be FOUC (Flash of Unstyled Content)
+- Synchronous `localStorage.getItem()` is read instantly at app startup
+- Volume — a few bytes, localStorage limits are irrelevant
+- Transactionality not needed — losing theme setting on crash is not critical
 
 ```typescript
-// Тема читается синхронно при инициализации — нет FOUC
+// Theme is read synchronously at initialization — no FOUC
 const theme = localStorage.getItem('openrml-settings:theme') ?? 'dark';
 document.documentElement.setAttribute('data-theme', theme);
 ```
 
 ---
 
-## Почему sessionStorage для кеша шаблонов
+## Why sessionStorage for Template Cache
 
-Шаблоны — это встроенные данные приложения, не пользовательские данные. Они:
-- Загружаются динамически при открытии Dashboard
-- Не должны накапливаться между сессиями (при обновлении приложения нужны свежие шаблоны)
-- Не требуют устойчивости — при следующем открытии приложения загрузятся заново
+Templates are built-in application data, not user data. They:
+- Load dynamically when Dashboard opens
+- Should not accumulate between sessions (when app updates, need fresh templates)
+- Don't require persistence — will reload on next app open
 
-sessionStorage очищается автоматически при закрытии вкладки — именно нужное поведение для кеша.
-
----
-
-## Рассмотренные альтернативы
-
-**Всё в localStorage.** Проще в реализации — один адаптер, синхронный API. Отклонено из-за ограничений по объёму, отсутствия транзакций и поведения Safari ITP для растущих библиотек ролей.
-
-**Всё в IndexedDB.** Единообразно. Отклонено потому что настройки темы нужны синхронно до первого рендера. Async IndexedDB для примитивных настроек — избыточная сложность с реальным UX-эффектом (мерцание темы).
-
-**Cookie.** Устаревший механизм для данных приложения, лимит 4КБ, передаётся с каждым HTTP-запросом (нарушение принципа локальности). Не рассматривался серьёзно.
-
-**OPFS (Origin Private File System).** Современный API, значительно быстрее IndexedDB для больших объёмов. Отклонён из-за слабой поддержки Safari на момент принятия решения и избыточности для текущих объёмов данных. Может быть пересмотрен в 0.3.0+.
+sessionStorage clears automatically on tab close — exactly the right behavior for cache.
 
 ---
 
-## Последствия
+## Alternatives Considered
 
-**Положительные:**
-- Роли защищены транзакциями — нет риска частичной записи
-- Нет практического лимита на размер библиотеки ролей
-- Тема применяется синхронно — нет мерцания при загрузке
-- Кеш шаблонов самоочищается — нет накопления устаревших данных
+**Everything in localStorage.** Simpler implementation — one adapter, synchronous API. Rejected due to volume limitations, lack of transactions, and Safari ITP behavior for growing role libraries.
 
-**Отрицательные:**
-- Три разных адаптера вместо одного — больше кода в `CompositeStorageAdapter`
-- IndexedDB async API сложнее в тестировании (нужен мок или реальный браузер)
-- Данные в IndexedDB сложнее инспектировать вручную, чем строки в localStorage
+**Everything in IndexedDB.** Uniform. Rejected because theme settings need to be synchronous before first render. Async IndexedDB for primitive settings is excessive complexity with real UX impact (theme flashing).
 
-**Нейтральные:**
-- `StoragePort` скрывает детали реализации от use-cases — смена адаптера не требует изменений в бизнес-логике
+**Cookies.** Outdated mechanism for app data, 4KB limit, transmitted with every HTTP request (violates data locality principle). Not seriously considered.
+
+**OPFS (Origin Private File System).** Modern API, significantly faster than IndexedDB for large volumes. Rejected due to weak Safari support at decision time and overkill for current data volumes. May be reconsidered in 0.10.0+.
+
+---
+
+## Consequences
+
+**Positive:**
+- Roles protected by transactions — no risk of partial writes
+- No practical limit on role library size
+- Theme applies synchronously — no flashing on load
+- Template cache self-cleans — no accumulation of stale data
+
+**Negative:**
+- Three different adapters instead of one — more code in `CompositeStorageAdapter`
+- IndexedDB async API harder to test (needs mock or real browser)
+- Data in IndexedDB harder to inspect manually than strings in localStorage
+
+**Neutral:**
+- `StoragePort` hides implementation details from use-cases — adapter changes don't require business logic changes
+
+---
+
+## OpenRML Migration Note
+
+**Updated in v0.9.0:** Database name remains `openrml-roles-db` (no change from original naming). Settings key prefix remains `openrml-settings`. This ADR was translated from Russian to English for consistency with other project documentation.

@@ -39,7 +39,7 @@ function AppContent() {
               
               {/* Language Selector */}
               <div className="flex gap-1">
-                {(['en', 'ua', 'ru'] as const).map(lang => (
+                {(['en', 'ua'] as const).map(lang => (
                   <button
                     key={lang}
                     onClick={() => setLanguage(lang)}
@@ -48,7 +48,7 @@ function AppContent() {
                         ? 'bg-[hsl(var(--color-primary))] text-[hsl(var(--color-primary-foreground))] shadow-sm'
                         : 'text-[hsl(var(--color-muted-foreground))] hover:bg-[hsl(var(--color-muted))]'
                     }`}
-                    title={lang === 'en' ? 'English' : lang === 'ua' ? 'Українська' : 'Русский'}
+                    title={lang === 'en' ? 'English' : 'Українська'}
                   >
                     {lang.toUpperCase()}
                   </button>

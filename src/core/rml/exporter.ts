@@ -1,18 +1,56 @@
 // src/core/rml/exporter.ts
 import { Role } from '../domain/role/types';
-import { LicenseService } from '../services/license.service';
 import { formatEnumForExport, type Language } from '../domain/role/enum-display-names';
 import { detectRoleLanguage, getLanguageName } from '../../lib/utils/language-detection';
 
+/**
+ * Транслитерация кириллицы в латиницу для имён файлов
+ * Поддерживает украинский и русский алфавиты
+ */
+function transliterate(text: string): string {
+  const map: Record<string, string> = {
+    // Українська
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'є': 'ye',
+    'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'ї': 'yi', 'й': 'y', 'к': 'k', 'л': 'l',
+    'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+    'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ь': '', 'ю': 'yu', 'я': 'ya',
+    // Русский (дополнительно)
+    'ё': 'yo', 'ы': 'y', 'э': 'e', 'ъ': '',
+    // Заглавные українські
+    'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'H', 'Ґ': 'G', 'Д': 'D', 'Е': 'E', 'Є': 'Ye',
+    'Ж': 'Zh', 'З': 'Z', 'И': 'Y', 'І': 'I', 'Ї': 'Yi', 'Й': 'Y', 'К': 'K', 'Л': 'L',
+    'М': 'M', 'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
+    'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch', 'Ь': '', 'Ю': 'Yu', 'Я': 'Ya',
+    // Заглавные русские
+    'Ё': 'Yo', 'Ы': 'Y', 'Э': 'E', 'Ъ': '',
+  };
+
+  return text
+    .split('')
+    .map(char => map[char] || char)
+    .join('');
+}
+
+/**
+ * Создаёт безопасное имя файла из названия роли
+ * Применяет транслитерацию для кириллицы
+ */
+export function sanitizeFilename(name: string): string {
+  return transliterate(name)
+    .replace(/[^a-z0-9]/gi, '_')  // Заменяем не-ASCII символы на подчеркивание
+    .replace(/_+/g, '_')           // Убираем повторяющиеся подчеркивания
+    .replace(/^_|_$/g, '')         // Убираем подчеркивания в начале/конце
+    .toLowerCase();
+}
+
 export class RMLExporter {
-  private licenseService = new LicenseService();
+  // licenseService removed - not used in current implementation
 }
 
 export const exportRoleToText = (role: Role, exportLanguage?: Language): string => {
   // Auto-detect language if not specified
   const language = exportLanguage || detectRoleLanguage(role);
   const sections: string[] = [];
-  const licenseService = new LicenseService();
 
 // ========== ACTIVATION INSTRUCTIONS ==========
 sections.push('Activate role from RML below:');
@@ -26,6 +64,16 @@ sections.push('4. USE memory from STEP 7 if available');
 sections.push('5. Before responding, VERIFY no ethical or scope violation.');
 sections.push('6. START with defined greeting');
 sections.push('');
+
+// ========== LANGUAGE POLICY ==========
+sections.push('🌐 LANGUAGE POLICY');
+sections.push('──────────────────────────');
+sections.push(`ROLE_LANG: ${role.roleLang || 'en'}`);
+sections.push('RESPONSE_LANG: auto');
+sections.push('LANGUAGE_SELECTOR: enabled');
+sections.push('SUPPORTED_LANGS: ua, en, zh, es, fr, de');
+sections.push('');
+
 sections.push('READY. Starting:');
 sections.push('');
   // ================================================
@@ -45,10 +93,14 @@ sections.push('');
   
   // 🆕 RML IDENTITY BLOCK
   if (role.rmlIdentity?.fullId) {
-    sections.push(`RML ${role.version || '1.0.0'} — ${role.name} [${role.status || 'draft'}]`);
-    sections.push(`IDENTITY: ${role.rmlIdentity.fullId}`);
+    sections.push(`OpenRML ${role.version || '1.0.0'} — ${role.name} [${role.status || 'draft'}]`);
+    // Изменяем префикс с RML на ORML
+    const ormlIdentity = role.rmlIdentity.fullId.replace(/^RML\//, 'ORML/');
+    sections.push(`IDENTITY: ${ormlIdentity}`);
     if (role.rmlIdentity.reference) {
-      sections.push(`REFERENCE: ${role.rmlIdentity.reference}`);
+      // Изменяем протокол с rml:// на orml://
+      const ormlReference = role.rmlIdentity.reference.replace(/^rml:\/\//, 'orml://');
+      sections.push(`REFERENCE: ${ormlReference}`);
     }
     sections.push(`ARCHETYPE: ${formatEnumForExport('archetype', role.archetype || 'mentor', language)}`);
     sections.push(`CATEGORY: ${formatEnumForExport('category', role.category || 'productivity', language)}`);
@@ -78,7 +130,7 @@ sections.push('');
     sections.push('');
   } else {
     // Старый формат для обратной совместимости
-    sections.push(`RML ${role.version || '1.0.0'} — ${role.name} [${role.status || 'draft'}]`);
+    sections.push(`OpenRML ${role.version || '1.0.0'} — ${role.name} [${role.status || 'draft'}]`);
     sections.push('═══════════════════════════════════════════════════');
     sections.push('');
     
@@ -341,13 +393,9 @@ sections.push('');
   sections.push('═══════════════════════════════════════════════════');
   
   sections.push('');
-sections.push('🌐 OpenRML Ecosystem');
-sections.push('─────────────────────────────────────────────────');
-sections.push('🛠️  Constructor: rolesai.life — create your own .rml.txt');
-sections.push('🎭 Gallery: FromUA.life — explore roles & demos');
-sections.push('');
-sections.push('OpenRML — open standard for AI role definitions');
-sections.push('═══════════════════════════════════════════════════');
+  sections.push('FromUA.Life - Для життя. Попри все.');
+  sections.push('🛠️  Builder: RolesAI.life — create your own .orml.txt');
+  sections.push('AnsAI.Life - soon...');
 
 
   return sections.join('\n');
@@ -359,7 +407,7 @@ export const downloadRole = (role: Role, language?: Language): void => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${role.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_role.rml.txt`;
+  link.download = `${sanitizeFilename(role.name || 'role')}_role.orml.txt`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

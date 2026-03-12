@@ -1,5 +1,6 @@
 // src/core/domain/role/types.ts
-export type Language = 'en' | 'ua' | 'ru';
+export type Language = 'en' | 'ua';
+export type RoleLang = 'en' | 'ua';
 export type Archetype = 'mentor' | 'creator' | 'analyst' | 'healer' | 'scientist' | 'leader' | 'explorer' | 'guardian';
 export type RoleType = 'professional' | 'personal' | 'educational' | 'creative';
 export type ResponseLength = number;
@@ -99,6 +100,7 @@ export interface Role {
   description: string;
   mainGoal: string;
   responseLength: ResponseLength;
+  roleLang?: RoleLang; // Language in which the role communicates (default: 'en')
 
   // P0: Метаданные для публикации
   status: RoleStatus;

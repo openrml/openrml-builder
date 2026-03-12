@@ -45,7 +45,7 @@ export const Constructor: React.FC = () => {
   
   // Language detection
   const [detectedLanguage, setDetectedLanguage] = useState<Language>('en');
-  const [exportLanguage, setExportLanguage] = useState<Language | 'auto'>('auto');
+  const exportLanguage: Language | 'auto' = 'auto'; 
   
   // Detect language when role content changes
   React.useEffect(() => {
@@ -237,7 +237,7 @@ export const Constructor: React.FC = () => {
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".txt,.rml.txt"
+                accept=".txt,.rml.txt,.orml.txt"
                 onChange={handleFileChange}
                 className="hidden"
               />

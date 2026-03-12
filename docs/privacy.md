@@ -37,7 +37,7 @@ When you browse the template library, template data is cached in sessionStorage 
 
 ### Exported Files — Your Filesystem
 
-When you export a role, the `.rml.txt` file is saved to wherever your browser saves downloads. That file is yours. It contains the complete role definition and nothing else — no tracking identifiers, no device fingerprints, no metadata beyond what you entered.
+When you export a role, the `.orml.txt` file is saved to wherever your browser saves downloads. That file is yours. It contains the complete role definition and nothing else — no tracking identifiers, no device fingerprints, no metadata beyond what you entered.
 
 ---
 
@@ -59,7 +59,7 @@ Standard web analytics (page views, geographic region, browser type) may be pres
 
 If you clear your browser's site data for `rolesai.life`, your roles are deleted. There is no recovery from a server because there is no server copy.
 
-**This is by design.** The export mechanism is the backup system. A `.rml.txt` file is a complete, self-contained copy of a role. Keeping your roles safe means exporting them.
+**This is by design.** The export mechanism is the backup system. A `.orml.txt` file is a complete, self-contained copy of a role. Keeping your roles safe means exporting them.
 
 Recommended practice:
 - Export any role you care about immediately after finishing it
@@ -93,14 +93,14 @@ This is precisely why the data locality principle is non-negotiable. The content
 
 ## For Future Implementations
 
-This document applies to the RolesAI reference implementation. If you are building an alternative RML implementation and considering server-side role storage:
+This document applies to the RolesAI reference implementation. If you are building an alternative OpenRML implementation and considering server-side role storage:
 
 - Require **explicit opt-in**, not opt-out
 - Make clear what you store and why
 - Never process role content for any purpose other than returning it to the user who created it
 - Treat role content as end-to-end encrypted wherever possible
 
-The RML specification does not prohibit server-side implementations. It does expect that implementations are honest with their users about where data lives.
+The OpenRML specification does not prohibit server-side implementations. It does expect that implementations are honest with their users about where data lives.
 
 See [FOUNDATION.md](../FOUNDATION.md) for the architectural principle behind this.
 

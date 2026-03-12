@@ -7,6 +7,7 @@ import { Label } from '../../ui/label';
 import { Textarea } from '../../ui/textarea';
 import { Slider } from '../../ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { RadioGroup, RadioGroupItem } from '../../ui/radio-group';
 import { categories } from '../../../../data/categories';
 import { Badge } from '../../ui/badge';
 // ❌ Удалены все импорты RMLIdentityBadge, IdentityService, Card, AlertTriangle
@@ -143,6 +144,35 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
         />
         <div className="text-xs text-muted-foreground">
           Separate with commas: tag1, tag2, tag3
+        </div>
+      </div>
+
+      {/* Role Language */}
+      <div className="space-y-2">
+        <Label className="text-sm sm:text-base font-semibold">
+          Role Language *
+        </Label>
+        <RadioGroup 
+          value={role.roleLang || 'en'} 
+          onValueChange={(value) => onChange({ roleLang: value as 'en' | 'ua' })}
+        >
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="en" id="lang-en" />
+              <Label htmlFor="lang-en" className="font-normal cursor-pointer">
+                English (EN)
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="ua" id="lang-ua" />
+              <Label htmlFor="lang-ua" className="font-normal cursor-pointer">
+                Українська (UA)
+              </Label>
+            </div>
+          </div>
+        </RadioGroup>
+        <div className="text-xs text-muted-foreground">
+          Primary language in which the role will communicate
         </div>
       </div>
 
