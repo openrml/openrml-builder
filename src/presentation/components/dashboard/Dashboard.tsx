@@ -141,10 +141,10 @@ export const Dashboard: React.FC = () => {
       {/* Hero Section */}
       <div className="rounded-xl bg-gradient-to-r from-[hsl(var(--color-primary))]/5 via-[hsl(var(--color-primary))]/5 to-[hsl(var(--color-secondary))]/5 p-6 mb-8 border border-[hsl(var(--color-border))]/50 text-center">
         <h1 className="text-2xl sm:text-3xl font-bold text-[hsl(var(--color-foreground))] mb-3">
-          {t('dashboardTitle') || 'Build Your AI Assistant'}
+          {t('dashboardTitle') || 'Prompts Are Dust. Roles Are Palaces'}
         </h1>
         <p className="text-[hsl(var(--color-muted-foreground))] mb-6 max-w-2xl mx-auto text-sm sm:text-base">
-          {t('dashboardSubtitle') || 'Create personalized AI roles with our intuitive 8-step builder. Start from scratch or use pre-built templates.'}
+          {t('dashboardSubtitle') || 'Create structured AI roles, not scattered prompts. One file. Infinite applications.'}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-3 justify-center">

@@ -20,9 +20,13 @@ export function LanguageProvider({
   defaultLanguage?: Language;
 }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem('openrml-language');
-    return (saved as Language) || defaultLanguage;
-  });
+  const saved = localStorage.getItem('openrml-language');
+  // Validate saved language - only accept 'en' or 'ua'
+  if (saved === 'en' || saved === 'ua') {
+    return saved;
+  }
+  return defaultLanguage;
+});
 
   useEffect(() => {
     localStorage.setItem('openrml-language', language);
@@ -33,8 +37,10 @@ export function LanguageProvider({
   };
 
   const t = (key: TranslationKey): string => {
-    return translations[language][key] || translations.en[key] || key;
-  };
+  // Safety check: ensure language exists in translations
+  const currentLang = translations[language] ? language : 'en';
+  return translations[currentLang]?.[key] || translations.en[key] || key;
+};
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
