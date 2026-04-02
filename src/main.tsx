@@ -2,6 +2,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { registerExportStrategies } from './core/export';
+
+// Initialize export strategies on app start
+registerExportStrategies();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

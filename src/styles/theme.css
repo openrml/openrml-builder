@@ -51,6 +51,11 @@
   --color-border: 214 28% 87%;
   --color-input: 214 28% 87%;
 
+  /* ===== POPOVER / DROPDOWN ===== */
+  /* ДОБАВЛЕНО: непрозрачный фон для dropdown меню */
+  --color-popover: 0 0% 100%;                /* Белый непрозрачный фон */
+  --color-popover-foreground: 222 39% 14%;   /* Тот же что foreground */
+
   /* ===== RING (focus) ===== */
   --color-ring: 262.9 84% 58%;
 
@@ -131,6 +136,11 @@
   /* BORDER */
   --color-border: 220 18% 22%;
   --color-input: 220 18% 22%;
+
+  /* POPOVER / DROPDOWN */
+  /* ДОБАВЛЕНО: непрозрачный фон для dropdown в dark mode */
+  --color-popover: 226 20% 13%;            /* Такой же как card */
+  --color-popover-foreground: 210 25% 93%; /* Такой же как foreground */
 
   /* RING */
   --color-ring: 263 75% 68%;

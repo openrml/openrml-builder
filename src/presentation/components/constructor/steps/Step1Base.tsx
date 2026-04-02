@@ -1,6 +1,6 @@
 // src/presentation/components/constructor/steps/Step1Base.tsx
 import React from 'react';
-import { Role, Archetype, RoleType } from '../../../../core/domain/role/types';
+import { Role, Archetype, RoleType, Language, ResponseBehavior } from '../../../../core/domain/role/types';
 import { useLanguage } from '../../../contexts/language.context';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
@@ -147,35 +147,6 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
         </div>
       </div>
 
-      {/* Role Language */}
-      <div className="space-y-2">
-        <Label className="text-sm sm:text-base font-semibold">
-          Role Language *
-        </Label>
-        <RadioGroup 
-          value={role.roleLang || 'en'} 
-          onValueChange={(value) => onChange({ roleLang: value as 'en' | 'ua' })}
-        >
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="en" id="lang-en" />
-              <Label htmlFor="lang-en" className="font-normal cursor-pointer">
-                English (EN)
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="ua" id="lang-ua" />
-              <Label htmlFor="lang-ua" className="font-normal cursor-pointer">
-                Українська (UA)
-              </Label>
-            </div>
-          </div>
-        </RadioGroup>
-        <div className="text-xs text-muted-foreground">
-          Primary language in which the role will communicate
-        </div>
-      </div>
-
       {/* Archetype */}
       <div className="space-y-2 sm:space-y-3">
         <Label className="text-sm sm:text-base font-semibold">{t('archetype')} *</Label>
@@ -249,6 +220,125 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
           rows={2}
           className="text-sm sm:text-base resize-none"
         />
+      </div>
+
+      {/* Language Settings */}
+      <div className="space-y-4 p-4 border border-border rounded-lg bg-muted/30">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-lg">🌐</span>
+          <h3 className="text-sm sm:text-base font-semibold">Language Settings</h3>
+        </div>
+        
+        {/* Primary Language */}
+        <div className="space-y-2">
+          <Label htmlFor="roleLang" className="text-sm">
+            Primary Language
+            <span className="ml-1 text-xs text-muted-foreground">(Language the role content is written in)</span>
+          </Label>
+          <Select
+            value={role.roleLang || 'en'}
+            onValueChange={(value) => onChange({ roleLang: value as Language })}
+          >
+            <SelectTrigger id="roleLang" className="text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="en">🇬🇧 English</SelectItem>
+              <SelectItem value="ua">🇺🇦 Українська</SelectItem>
+              <SelectItem value="es">🇪🇸 Español</SelectItem>
+              <SelectItem value="zh">🇨🇳 中文</SelectItem>
+              <SelectItem value="fr">🇫🇷 Français</SelectItem>
+              <SelectItem value="de">🇩🇪 Deutsch</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Supported Languages */}
+        <div className="space-y-2">
+          <Label className="text-sm">
+            Supported Languages
+            <span className="ml-1 text-xs text-muted-foreground">(Languages the role can respond in)</span>
+          </Label>
+          <Input
+            value={(role.supportedLanguages || ['en', 'ua']).join(', ')}
+            onChange={(e) => {
+              const langs = e.target.value
+                .split(',')
+                .map(l => l.trim())
+                .filter(l => ['en', 'ua', 'es', 'zh', 'fr', 'de'].includes(l)) as Language[];
+              onChange({ supportedLanguages: langs.length > 0 ? langs : ['en', 'ua'] });
+            }}
+            placeholder="en, ua, es"
+            className="text-sm font-mono"
+          />
+          <p className="text-xs text-muted-foreground">
+            Comma-separated codes: en, ua, es, zh, fr, de
+          </p>
+        </div>
+
+        {/* Response Behavior */}
+        <div className="space-y-2">
+          <Label className="text-sm">Response Behavior</Label>
+          <RadioGroup
+            value={role.responseBehavior || 'auto'}
+            onValueChange={(value) => onChange({ responseBehavior: value as ResponseBehavior })}
+            className="space-y-2"
+          >
+            <div className="flex items-start space-x-2">
+              <RadioGroupItem value="auto" id="auto" className="mt-0.5" />
+              <Label htmlFor="auto" className="text-sm font-normal cursor-pointer">
+                <span className="font-medium">Auto-detect</span>
+                <span className="block text-xs text-muted-foreground">
+                  Automatically detect and respond in user's language
+                </span>
+              </Label>
+            </div>
+            <div className="flex items-start space-x-2">
+              <RadioGroupItem value="match" id="match" className="mt-0.5" />
+              <Label htmlFor="match" className="text-sm font-normal cursor-pointer">
+                <span className="font-medium">Match user</span>
+                <span className="block text-xs text-muted-foreground">
+                  Always respond in the same language as user's message
+                </span>
+              </Label>
+            </div>
+            <div className="flex items-start space-x-2">
+              <RadioGroupItem value="strict" id="strict" className="mt-0.5" />
+              <Label htmlFor="strict" className="text-sm font-normal cursor-pointer">
+                <span className="font-medium">Primary only</span>
+                <span className="block text-xs text-muted-foreground">
+                  Always respond in primary language regardless of user's language
+                </span>
+              </Label>
+            </div>
+            <div className="flex items-start space-x-2">
+              <RadioGroupItem value="flexible" id="flexible" className="mt-0.5" />
+              <Label htmlFor="flexible" className="text-sm font-normal cursor-pointer">
+                <span className="font-medium">Flexible</span>
+                <span className="block text-xs text-muted-foreground">
+                  Switch language when user explicitly requests
+                </span>
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Allow Language Switch */}
+        <div className="flex items-start space-x-2">
+          <input
+            type="checkbox"
+            id="allowLanguageSwitch"
+            checked={role.allowLanguageSwitch !== false}
+            onChange={(e) => onChange({ allowLanguageSwitch: e.target.checked })}
+            className="mt-1"
+          />
+          <Label htmlFor="allowLanguageSwitch" className="text-sm font-normal cursor-pointer">
+            Allow user to change language during conversation
+            <span className="block text-xs text-muted-foreground">
+              User can ask to switch languages (e.g., "Please continue in English")
+            </span>
+          </Label>
+        </div>
       </div>
 
       {/* Response Length */}

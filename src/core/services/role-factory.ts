@@ -45,6 +45,12 @@ export function createEmptyRole(): Role {
     description: '',
     mainGoal: '',
     responseLength: 4,
+    
+    // Language settings
+    roleLang: 'en',
+    supportedLanguages: ['en', 'ua'],
+    responseBehavior: 'auto',
+    allowLanguageSwitch: true,
 
     // P0: Метаданные
     status: 'draft' as RoleStatus,

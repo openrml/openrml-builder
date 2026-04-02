@@ -8,11 +8,10 @@ import {
   ImportRMLOutputV2,
   StepKey,
 } from '../../../application/use-cases/import-rml.use-case';
-import { ExportRMLUseCase } from '../../../application/use-cases/export-rml.use-case';
 import { SaveRoleUseCase } from '../../../application/use-cases/save-role.use-case';
 import { Progress } from '../ui/progress';
 import { Button } from '../ui/button';
-import { ChevronLeft, ChevronRight, Save, FileDown, FileUp, Home, Check, AlertTriangle, Menu, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, FileUp, Home, Check, AlertTriangle, Menu, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { detectRoleLanguage } from '../../../lib/utils/language-detection';
 import { LanguageBadge } from '../ui/language-badge';
@@ -29,6 +28,7 @@ import { Step7Memory } from './steps/Step7Memory';
 import { Step8Ethics } from './steps/Step8Ethics';
 import { LivePreview } from './LivePreview';
 import { ImportModal } from './ImportModal';
+import { ExportMenu } from './ExportMenu';
 
 export const Constructor: React.FC = () => {
   const { t } = useLanguage();
@@ -43,11 +43,9 @@ export const Constructor: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showPreview, setShowPreview]     = useState(window.innerWidth > 1024);
   
-  // Language detection
+  // Language detection for badge display
   const [detectedLanguage, setDetectedLanguage] = useState<Language>('en');
-  const exportLanguage: Language | 'auto' = 'auto'; 
   
-  // Detect language when role content changes
   React.useEffect(() => {
     const detected = detectRoleLanguage(currentRole);
     setDetectedLanguage(detected);
@@ -97,17 +95,6 @@ export const Constructor: React.FC = () => {
     } catch {
       toast.error(t('saveError') || 'Save error');
     }
-  };
-
-  const handleExport = () => {
-    const useCase = new ExportRMLUseCase();
-    const langToUse = exportLanguage === 'auto' ? detectedLanguage : exportLanguage;
-    useCase.execute({ 
-      role: currentRole, 
-      download: true,
-      language: langToUse
-    });
-    toast.success(`${t('roleExported') || 'Role exported'}: ${currentRole.name}`);
   };
 
   const handleImportClick = () => {
@@ -262,16 +249,10 @@ export const Constructor: React.FC = () => {
                   </>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExport}
-                className="gap-1 sm:gap-2 h-8 sm:h-9 px-2 sm:px-3"
-              >
-                <FileDown className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">{t('export') || 'Export'}</span>
-                <span className="sm:hidden">Exp</span>
-              </Button>
+              <ExportMenu 
+                role={currentRole} 
+                disabled={!currentRole.name}
+              />
 
               <Button
                 variant="outline"

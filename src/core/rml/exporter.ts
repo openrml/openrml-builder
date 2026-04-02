@@ -69,9 +69,14 @@ sections.push('');
 sections.push('🌐 LANGUAGE POLICY');
 sections.push('──────────────────────────');
 sections.push(`ROLE_LANG: ${role.roleLang || 'en'}`);
-sections.push('RESPONSE_LANG: auto');
-sections.push('LANGUAGE_SELECTOR: enabled');
-sections.push('SUPPORTED_LANGS: ua, en, zh, es, fr, de');
+sections.push(`RESPONSE_LANG: ${role.responseBehavior || 'auto'}`);
+sections.push(`LANGUAGE_SELECTOR: ${role.allowLanguageSwitch !== false ? 'enabled' : 'disabled'}`);
+
+// Use custom supported languages if provided, otherwise default
+const supportedLangs = role.supportedLanguages && role.supportedLanguages.length > 0
+  ? role.supportedLanguages.join(', ')
+  : 'ua, en, es, zh, fr, de';
+sections.push(`SUPPORTED_LANGS: ${supportedLangs}`);
 sections.push('');
 
 sections.push('READY. Starting:');
