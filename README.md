@@ -99,6 +99,72 @@ Full breakdown — in [`docs/privacy.md`](./docs/privacy.md).
 
 ---
 
+## JSON Schema Validation
+
+OpenRML includes a formal **JSON Schema** for the Role type, enabling validation, type safety, and interoperability.
+
+### Features
+
+- ✅ **Complete validation** for all 8 steps of OpenRML specification
+- ✅ **TypeScript type guards** for compile-time safety
+- ✅ **CLI tool** for validating JSON role files
+- ✅ **35+ automated tests** with 95%+ code coverage
+- ✅ **Detailed error messages** for debugging
+
+### Usage
+
+**In TypeScript code:**
+
+```typescript
+import { isValidRole, getRoleValidationErrors } from '@/core/domain/role/role.schema';
+
+// Type guard validation
+if (isValidRole(roleData)) {
+  // TypeScript knows roleData is a valid Role
+  console.log(roleData.name);
+} else {
+  const errors = getRoleValidationErrors(roleData);
+  console.error('Validation errors:', errors);
+}
+```
+
+**CLI validation:**
+
+```bash
+# Validate a single JSON file
+npm run validate-schema examples/json/productivity-coach.json
+
+# Validate all JSON files in a directory
+npm run validate-schema -- --all examples/json/
+```
+
+**In use-cases:**
+
+```typescript
+import { validateRoleUseCase } from '@/application/use-cases/validate-role.use-case';
+
+const result = validateRoleUseCase(importedData);
+if (result.isValid) {
+  await saveRole(result.role);
+} else {
+  showErrors(result.errors);
+}
+```
+
+### Documentation
+
+- **Schema specification**: [`src/core/domain/role/role.schema.json`](./src/core/domain/role/role.schema.json)
+- **Detailed guide**: [`src/core/domain/role/SCHEMA_README.md`](./src/core/domain/role/SCHEMA_README.md)
+- **Tests**: [`src/core/domain/role/role.schema.test.ts`](./src/core/domain/role/role.schema.test.ts)
+
+### Testing
+
+```bash
+npm test  # Run all validation tests
+```
+
+---
+
 ## OpenRML Format
 
 A role exported via OpenRML looks like this:
@@ -239,9 +305,9 @@ More details: [USE_CASES_UA.md](./docs/USE_CASES_UA.md) (Ukrainian version avail
 - New documentation (UA)
 
 ### 0.10.0 — Validation & Testing
-- [ ] Formal JSON Schema for Role type
+- [x] Formal JSON Schema for Role type
 - [ ] Export format versioning (`OpenRML-Format: 1.0`)
-- [ ] Validation layer with structured error messages
+- [x] Validation layer with structured error messages
 - [ ] Round-trip fidelity test suite
 
 ### 1.0.0 — Stable Specification

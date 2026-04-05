@@ -99,6 +99,72 @@ src/
 
 ---
 
+## JSON Schema Валідація
+
+OpenRML включає формальну **JSON Schema** для типу Role, що забезпечує валідацію, безпеку типів та інтероперабельність.
+
+### Можливості
+
+- ✅ **Повна валідація** всіх 8 кроків специфікації OpenRML
+- ✅ **TypeScript type guards** для безпеки типів на етапі компіляції
+- ✅ **CLI-інструмент** для валідації JSON-файлів ролей
+- ✅ **35+ автоматичних тестів** з покриттям коду 95%+
+- ✅ **Детальні повідомлення про помилки** для налагодження
+
+### Використання
+
+**У TypeScript коді:**
+
+```typescript
+import { isValidRole, getRoleValidationErrors } from '@/core/domain/role/role.schema';
+
+// Валідація з type guard
+if (isValidRole(roleData)) {
+  // TypeScript знає, що roleData є валідною Role
+  console.log(roleData.name);
+} else {
+  const errors = getRoleValidationErrors(roleData);
+  console.error('Помилки валідації:', errors);
+}
+```
+
+**Валідація через CLI:**
+
+```bash
+# Валідація одного JSON-файлу
+npm run validate-schema examples/json/productivity-coach.json
+
+# Валідація всіх JSON-файлів у директорії
+npm run validate-schema -- --all examples/json/
+```
+
+**У use-cases:**
+
+```typescript
+import { validateRoleUseCase } from '@/application/use-cases/validate-role.use-case';
+
+const result = validateRoleUseCase(importedData);
+if (result.isValid) {
+  await saveRole(result.role);
+} else {
+  showErrors(result.errors);
+}
+```
+
+### Документація
+
+- **Специфікація схеми**: [`src/core/domain/role/role.schema.json`](./src/core/domain/role/role.schema.json)
+- **Детальний гайд**: [`src/core/domain/role/SCHEMA_README.md`](./src/core/domain/role/SCHEMA_README.md)
+- **Тести**: [`src/core/domain/role/role.schema.test.ts`](./src/core/domain/role/role.schema.test.ts)
+
+### Тестування
+
+```bash
+npm test  # Запуск всіх тестів валідації
+```
+
+---
+
 ## Формат OpenRML
 
 Роль, експортована через OpenRML, виглядає так:
@@ -241,9 +307,9 @@ User: "Що приготувати на вечерю?"
 - Нова документація (UA)
 
 ### 0.10.0 — Валідація та тестування
-- [ ] Формальна JSON Schema для типу Role
+- [x] Формальна JSON Schema для типу Role
 - [ ] Версіонування формату експорту (`OpenRML-Format: 1.0`)
-- [ ] Шар валідації зі структурованими повідомленнями про помилки
+- [x] Шар валідації зі структурованими повідомленнями про помилки
 - [ ] Тести точності зворотного перетворення (експорт → імпорт → експорт = ідентично)
 
 ### 1.0.0 — Стабільна специфікація

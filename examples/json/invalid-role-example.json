@@ -1,0 +1,73 @@
+{
+  "$schema": "../src/core/domain/role/role.schema.json",
+  "id": "invalid-role",
+  "name": "Invalid Role Example",
+  "archetype": "invalid-archetype",
+  "roleType": "professional",
+  "description": "This role has several validation errors to demonstrate schema validation",
+  "mainGoal": "Demonstrate validation errors",
+  "responseLength": 15,
+  "status": "draft",
+  "version": "not-a-valid-version",
+  "category": "technology",
+  "tags": [],
+  
+  "age": "30-40",
+  "visualStyle": "professional",
+  "visualDetails": "Details",
+  "visualAccent": "Accent",
+  "environment": "office",
+  "atmosphere": "Calm",
+  "imageStyle": "professional",
+  "lighting": "natural",
+  
+  "greeting": "Hello",
+  "tone": "professional",
+  "emotionalRange": "moderate",
+  "personality": {
+    "creativity": 15,
+    "formality": 5,
+    "empathy": 0,
+    "assertiveness": 7,
+    "patience": 8
+  },
+  "shouldDo": [],
+  "shouldNotDo": ["Nothing"],
+  
+  "expertiseAreas": [],
+  "tools": ["Tool 1"],
+  "outputFormats": ["Format 1"],
+  "additionalRules": "Rules",
+  
+  "sessions": [
+    {
+      "id": "s1",
+      "tasks": ["Task 1"]
+    }
+  ],
+  
+  "teamEnabled": true,
+  "orchestrator": "Orchestrator",
+  "subRoles": [],
+  "taskProtocol": "Protocol",
+  
+  "hotMemory": "Hot",
+  "warmMemory": "Warm",
+  "coldMemory": "Cold",
+  "memoryStrategy": "invalid-strategy",
+  "emotionalStates": ["happy"],
+  
+  "ethicalRules": [
+    {
+      "rule": "Rule 1",
+      "action": "invalid-action"
+    }
+  ],
+  "disclaimer": "Disclaimer",
+  "author": "Author",
+  "contacts": "Contact",
+  "changelog": ["1.0.0: Initial"],
+  
+  "createdAt": "not-a-date",
+  "updatedAt": "2026-03-20T14:30:00Z"
+}

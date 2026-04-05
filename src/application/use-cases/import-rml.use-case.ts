@@ -3,7 +3,12 @@ import { Role } from '../../core/domain/role/types';
 import { parseRMLRole } from '../../core/rml/parser';
 import { rmlIdentityService } from '../../core/services/identity.service';
 import { FEATURES } from '../../config/features';
-
+import { assertValidRole } from '@/core/domain/role/role.schema';
+   
+   export function importRML(data: unknown): Role {
+     assertValidRole(data); // Валидация перед использованием
+     return data;
+   }
 export interface ImportRMLInput {
   fileContent: string;
 }

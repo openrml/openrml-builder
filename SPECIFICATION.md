@@ -338,7 +338,7 @@ Emotional States Tracked:
 ⚖️ STEP 8: ETHICS & VERSIONS
 ─────────────────────────────────────────────────
 Ethical Rules:
-  ✓ [STOP|WARN|REFER] {rule}
+  ✓ [STOP|WARN|ALLOW] {rule}
   ...
 
 🔄 REFERRAL PROTOCOL
@@ -373,7 +373,7 @@ Version History:
 |------|---------|---------|
 | `[STOP]` | Hard block — must refuse | `[STOP] Never provide medical diagnoses` |
 | `[WARN]` | Soft advisory — caution but may proceed | `[WARN] Remind user to consult professional` |
-| `[REFER]` | Refer to human expert | `[REFER] For medical issues, refer to healthcare provider` |
+| `[ALLOW]` | Explicit permission for ambiguous cases | `[ALLOW] Can discuss nutrition science` |
 
 **Referral Protocol:** Defines when the role should refer the user to a human expert.
 

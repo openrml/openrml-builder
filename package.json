@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "validate-schema": "node scripts/validate-schema.js"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -34,6 +37,8 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -60,9 +65,12 @@
     "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^5.1.1",
+    "@vitest/ui": "^2.1.8",
+    "jsdom": "^29.0.1",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.7.2",
     "vite": "^6.0.7",
-    "vite-plugin-pwa": "^0.21.1"
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^2.1.8"
   }
 }

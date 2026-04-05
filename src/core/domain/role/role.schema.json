@@ -1,0 +1,723 @@
+{
+  "$id": "https://openrml.org/schemas/role/1.0.0",
+  "title": "OpenRML Role Schema",
+  "description": "JSON Schema for OpenRML (Open Role Markup Language) Role type v1.0.0",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "archetype",
+    "roleType",
+    "description",
+    "mainGoal",
+    "responseLength",
+    "status",
+    "version",
+    "category",
+    "tags",
+    "age",
+    "visualStyle",
+    "visualDetails",
+    "visualAccent",
+    "environment",
+    "atmosphere",
+    "imageStyle",
+    "lighting",
+    "greeting",
+    "tone",
+    "emotionalRange",
+    "personality",
+    "shouldDo",
+    "shouldNotDo",
+    "expertiseAreas",
+    "tools",
+    "outputFormats",
+    "additionalRules",
+    "sessions",
+    "teamEnabled",
+    "orchestrator",
+    "subRoles",
+    "taskProtocol",
+    "hotMemory",
+    "warmMemory",
+    "coldMemory",
+    "memoryStrategy",
+    "emotionalStates",
+    "ethicalRules",
+    "disclaimer",
+    "author",
+    "contacts",
+    "changelog",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the role",
+      "pattern": "^[a-zA-Z0-9_-]+$"
+    },
+    "name": {
+      "type": "string",
+      "description": "Display name of the role",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "archetype": {
+      "type": "string",
+      "description": "Role archetype defining the primary behavioral pattern",
+      "enum": [
+        "mentor",
+        "creator",
+        "analyst",
+        "healer",
+        "scientist",
+        "leader",
+        "explorer",
+        "guardian",
+        "advisor",
+        "negotiator",
+        "caregiver"
+      ]
+    },
+    "roleType": {
+      "type": "string",
+      "description": "Category of the role's primary application domain",
+      "enum": [
+        "professional",
+        "personal",
+        "educational",
+        "creative"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of the role's purpose and capabilities",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "mainGoal": {
+      "type": "string",
+      "description": "Primary objective the role aims to achieve",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "responseLength": {
+      "type": "number",
+      "description": "Preferred response length (1-10 scale)",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "roleLang": {
+      "type": "string",
+      "description": "Primary language the role communicates in",
+      "enum": ["en", "ua", "es", "zh", "fr", "de"]
+    },
+    "supportedLanguages": {
+      "type": "array",
+      "description": "Languages the role can operate in",
+      "items": {
+        "type": "string",
+        "enum": ["en", "ua", "es", "zh", "fr", "de"]
+      },
+      "uniqueItems": true
+    },
+    "responseBehavior": {
+      "type": "string",
+      "description": "How the role responds to different languages",
+      "enum": ["auto", "strict", "flexible", "match"]
+    },
+    "allowLanguageSwitch": {
+      "type": "boolean",
+      "description": "Whether users can change language during conversation"
+    },
+    "status": {
+      "type": "string",
+      "description": "Publication status of the role",
+      "enum": ["draft", "published", "archived"]
+    },
+    "version": {
+      "type": "string",
+      "description": "Semantic version of the role",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[a-zA-Z0-9.-]+)?(\\+[a-zA-Z0-9.-]+)?$"
+    },
+    "category": {
+      "type": "string",
+      "description": "Primary category for role organization",
+      "enum": [
+        "health",
+        "productivity",
+        "daily",
+        "finance",
+        "relationships",
+        "development",
+        "technology",
+        "entertainment"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "description": "Searchable tags for the role",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 50
+      },
+      "uniqueItems": true,
+      "maxItems": 20
+    },
+    "age": {
+      "type": "string",
+      "description": "Approximate age or age range for the role's persona",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "visualStyle": {
+      "type": "string",
+      "description": "Overall visual presentation style",
+      "enum": ["professional", "casual", "creative", "academic"]
+    },
+    "visualDetails": {
+      "type": "string",
+      "description": "Specific visual characteristics and details",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "visualAccent": {
+      "type": "string",
+      "description": "Key visual element or accent",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "environment": {
+      "type": "string",
+      "description": "Primary environment setting",
+      "enum": [
+        "office",
+        "hospital",
+        "business",
+        "library",
+        "studio",
+        "home",
+        "digital"
+      ]
+    },
+    "atmosphere": {
+      "type": "string",
+      "description": "Overall atmosphere and mood",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "imageStyle": {
+      "type": "string",
+      "description": "Style for visual representation",
+      "enum": [
+        "portrait",
+        "professional",
+        "illustration",
+        "digital-art"
+      ]
+    },
+    "lighting": {
+      "type": "string",
+      "description": "Lighting style for visual representation",
+      "enum": ["natural", "studio", "soft", "dramatic"]
+    },
+    "greeting": {
+      "type": "string",
+      "description": "Initial greeting message from the role",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "tone": {
+      "type": "string",
+      "description": "Communication tone",
+      "enum": [
+        "professional",
+        "friendly",
+        "formal",
+        "informal",
+        "empathetic",
+        "enthusiastic"
+      ]
+    },
+    "emotionalRange": {
+      "type": "string",
+      "description": "Level of emotional expression",
+      "enum": ["minimal", "moderate", "expressive"]
+    },
+    "personality": {
+      "type": "object",
+      "description": "Personality traits on 1-10 scale",
+      "required": [
+        "creativity",
+        "formality",
+        "empathy",
+        "assertiveness",
+        "patience"
+      ],
+      "properties": {
+        "creativity": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "formality": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "empathy": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "assertiveness": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "patience": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false
+    },
+    "shouldDo": {
+      "type": "array",
+      "description": "Recommended behaviors and actions",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "minItems": 1
+    },
+    "shouldNotDo": {
+      "type": "array",
+      "description": "Behaviors and actions to avoid",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      },
+      "minItems": 1
+    },
+    "expertiseAreas": {
+      "type": "array",
+      "description": "Areas of expertise and knowledge",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "minItems": 1
+    },
+    "tools": {
+      "type": "array",
+      "description": "Tools and methods the role uses",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "outputFormats": {
+      "type": "array",
+      "description": "Formats the role can produce",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "additionalRules": {
+      "type": "string",
+      "description": "Additional custom rules and guidelines",
+      "maxLength": 2000
+    },
+    "sessions": {
+      "type": "array",
+      "description": "Journey sessions for structured progression",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "tasks"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique session identifier"
+          },
+          "title": {
+            "type": "string",
+            "description": "Session title",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "tasks": {
+            "type": "array",
+            "description": "Tasks to complete in this session",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            },
+            "minItems": 1
+          },
+          "estimatedDuration": {
+            "type": "number",
+            "description": "Estimated duration in minutes",
+            "minimum": 1
+          },
+          "outcomes": {
+            "type": "array",
+            "description": "Expected outcomes from the session",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "journeyPacing": {
+      "type": "object",
+      "description": "Pacing guidelines for the journey",
+      "properties": {
+        "recommendedInterval": {
+          "type": "string",
+          "description": "Recommended time between sessions",
+          "maxLength": 100
+        },
+        "maxSessionsPerWeek": {
+          "type": "number",
+          "description": "Maximum sessions per week",
+          "minimum": 1,
+          "maximum": 14
+        }
+      },
+      "additionalProperties": false
+    },
+    "teamEnabled": {
+      "type": "boolean",
+      "description": "Whether team collaboration is enabled"
+    },
+    "orchestrator": {
+      "type": "string",
+      "description": "Team orchestrator description",
+      "maxLength": 500
+    },
+    "subRoles": {
+      "type": "array",
+      "description": "Sub-roles for team collaboration",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique sub-role identifier"
+          },
+          "name": {
+            "type": "string",
+            "description": "Sub-role name",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "Sub-role description",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "taskProtocol": {
+      "type": "string",
+      "description": "Protocol for task distribution and collaboration",
+      "maxLength": 1000
+    },
+    "memoryTransfer": {
+      "type": "object",
+      "description": "Memory transfer configuration for team",
+      "required": ["enabled", "scope"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether memory transfer is enabled"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Scope of memory transfer",
+          "enum": ["hot", "warm", "full"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "hotMemory": {
+      "type": "string",
+      "description": "Short-term, immediately relevant context",
+      "maxLength": 1000
+    },
+    "warmMemory": {
+      "type": "string",
+      "description": "Medium-term context and preferences",
+      "maxLength": 1000
+    },
+    "coldMemory": {
+      "type": "string",
+      "description": "Long-term knowledge and historical context",
+      "maxLength": 1000
+    },
+    "memoryStrategy": {
+      "type": "string",
+      "description": "Strategy for organizing and prioritizing memory",
+      "enum": ["semantic", "chronological", "importance", "emotional"]
+    },
+    "emotionalStates": {
+      "type": "array",
+      "description": "Emotional states the role can track",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100
+      }
+    },
+    "ethicalRules": {
+      "type": "array",
+      "description": "Ethical rules and boundaries",
+      "items": {
+        "type": "object",
+        "required": ["rule", "action"],
+        "properties": {
+          "rule": {
+            "type": "string",
+            "description": "The ethical rule or boundary",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "action": {
+            "type": "string",
+            "description": "Action to take when rule is triggered",
+            "enum": ["warn", "stop", "refer"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "referralProtocol": {
+      "type": "object",
+      "description": "Protocol for referring to other experts",
+      "required": ["triggers", "message"],
+      "properties": {
+        "triggers": {
+          "type": "array",
+          "description": "Situations that trigger referral",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "minItems": 1
+        },
+        "message": {
+          "type": "string",
+          "description": "Referral message template",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "additionalProperties": false
+    },
+    "disclaimer": {
+      "type": "string",
+      "description": "Legal or usage disclaimer",
+      "maxLength": 2000
+    },
+    "author": {
+      "type": "string",
+      "description": "Author of the role",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "contacts": {
+      "type": "string",
+      "description": "Contact information for the author",
+      "maxLength": 500
+    },
+    "changelog": {
+      "type": "array",
+      "description": "Version history and changes",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      }
+    },
+    "license": {
+      "type": "object",
+      "description": "Licensing information",
+      "required": ["type", "terms"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "License type",
+          "enum": [
+            "CC-BY-4.0",
+            "CC-BY-SA-4.0",
+            "CC-BY-NC-4.0",
+            "CC-BY-NC-SA-4.0",
+            "CC-BY-ND-4.0",
+            "CC-BY-NC-ND-4.0",
+            "CUSTOM"
+          ]
+        },
+        "terms": {
+          "type": "object",
+          "description": "Specific license terms",
+          "required": [
+            "canUse",
+            "canModify",
+            "canDistribute",
+            "canUseCommercially",
+            "mustAttribute",
+            "mustShareAlike"
+          ],
+          "properties": {
+            "canUse": {
+              "type": "boolean",
+              "description": "Whether the role can be used"
+            },
+            "canModify": {
+              "type": "boolean",
+              "description": "Whether the role can be modified"
+            },
+            "canDistribute": {
+              "type": "boolean",
+              "description": "Whether the role can be distributed"
+            },
+            "canUseCommercially": {
+              "type": "boolean",
+              "description": "Whether commercial use is allowed"
+            },
+            "mustAttribute": {
+              "type": "boolean",
+              "description": "Whether attribution is required"
+            },
+            "mustShareAlike": {
+              "type": "boolean",
+              "description": "Whether derivatives must use same license"
+            }
+          },
+          "additionalProperties": false
+        },
+        "attribution": {
+          "type": "string",
+          "description": "Attribution text",
+          "maxLength": 500
+        },
+        "expiresAt": {
+          "type": "string",
+          "description": "License expiration date (ISO 8601)",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "rmlIdentity": {
+      "type": "object",
+      "description": "OpenRML deterministic identity hashes",
+      "properties": {
+        "fullId": {
+          "type": "string",
+          "description": "Complete identity hash",
+          "pattern": "^ORML/[A-Z]{2}/\\d+\\.\\d+\\.\\d+(/[a-f0-9]{4}){8}$"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Human-readable reference",
+          "pattern": "^orml://[a-z0-9-]+/[a-z0-9-]+/\\d+\\.\\d+\\.\\d+$"
+        },
+        "baseHash": {
+          "type": "string",
+          "description": "Base information hash",
+          "pattern": "^[a-f0-9]{4}$"
+        },
+        "visualHash": {
+          "type": "string",
+          "description": "Visual portrait hash",
+          "pattern": "^[a-f0-9]{4}$"
+        },
+        "toneHash": {
+          "type": "string",
+          "description": "Behavior and tone hash",
+          "pattern": "^[a-f0-9]{4}$"
+        },
+        "expertiseHash": {
+          "type": "string",
+          "description": "Expertise hash",
+          "pattern": "^[a-f0-9]{4}$"
+        },
+        "journeyHash": {
+          "type": "string",
+          "description": "Journey sessions hash",
+          "pattern": "^[a-f0-9]{4}$"
+        },
+        "teamHash": {
+          "type": "string",
+          "description": "Team configuration hash",
+          "pattern": "^[a-f0-9]{4}$"
+        },
+        "memoryHash": {
+          "type": "string",
+          "description": "Memory system hash",
+          "pattern": "^[a-f0-9]{4}$"
+        },
+        "ethicsHash": {
+          "type": "string",
+          "description": "Ethics and rules hash",
+          "pattern": "^[a-f0-9]{4}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "identityMetadata": {
+      "type": "object",
+      "description": "Metadata about identity generation",
+      "required": ["generatedAt", "schemaVersion", "canonical"],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "description": "Timestamp when identity was generated (ISO 8601)",
+          "format": "date-time"
+        },
+        "schemaVersion": {
+          "type": "string",
+          "description": "Schema version used",
+          "const": "1.0"
+        },
+        "canonical": {
+          "type": "boolean",
+          "description": "Whether this is the canonical version"
+        }
+      },
+      "additionalProperties": false
+    },
+    "createdAt": {
+      "type": "string",
+      "description": "Creation timestamp (ISO 8601)",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "description": "Last update timestamp (ISO 8601)",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": true
+}
