@@ -2,6 +2,7 @@
 import { Role } from '../domain/role/types';
 import { formatEnumForExport, type Language } from '../domain/role/enum-display-names';
 import { detectRoleLanguage, getLanguageName } from '../../lib/utils/language-detection';
+import { resolveResponseLang } from './exporter-response-lang-fix';
 
 /**
  * Транслитерация кириллицы в латиницу для имён файлов
@@ -69,7 +70,7 @@ sections.push('');
 sections.push('🌐 LANGUAGE POLICY');
 sections.push('──────────────────────────');
 sections.push(`ROLE_LANG: ${role.roleLang || 'en'}`);
-sections.push(`RESPONSE_LANG: ${role.responseBehavior || 'auto'}`);
+sections.push(`RESPONSE_LANG: ${resolveResponseLang(role)}`);
 sections.push(`LANGUAGE_SELECTOR: ${role.allowLanguageSwitch !== false ? 'enabled' : 'disabled'}`);
 
 // Use custom supported languages if provided, otherwise default

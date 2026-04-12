@@ -1,4 +1,6 @@
 // src/presentation/components/constructor/steps/Step1Base.tsx
+// COMBINED VERSION: New RESPONSE_LANG logic + Preserved category functionality
+
 import React from 'react';
 import { Role, Archetype, RoleType, Language, ResponseBehavior } from '../../../../core/domain/role/types';
 import { useLanguage } from '../../../contexts/language.context';
@@ -7,10 +9,9 @@ import { Label } from '../../ui/label';
 import { Textarea } from '../../ui/textarea';
 import { Slider } from '../../ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-import { RadioGroup, RadioGroupItem } from '../../ui/radio-group';
 import { categories } from '../../../../data/categories';
 import { Badge } from '../../ui/badge';
-// ❌ Удалены все импорты RMLIdentityBadge, IdentityService, Card, AlertTriangle
+import { InfoIcon } from 'lucide-react';
 
 interface Step1BaseProps {
   role: Role;
@@ -44,10 +45,39 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
     onChange({ tags: tagArray });
   };
 
+  /**
+   * Validate response language input
+   * Accepts: 'auto', 'match', 'flexible', language codes, or bilingual (e.g., 'en, ua')
+   */
+  const handleResponseLangChange = (value: string) => {
+    const trimmed = value.trim().toLowerCase();
+    
+    // Allow empty (defaults to 'auto')
+    if (!trimmed) {
+      onChange({ responseBehavior: 'auto' });
+      return;
+    }
+    
+    // Store as-is, validation happens on export
+    onChange({ responseBehavior: trimmed as ResponseBehavior });
+  };
+
+  /**
+   * Get current response language value for display
+   */
+  const getResponseLangDisplay = (): string => {
+    const behavior = role.responseBehavior;
+    
+    // Handle legacy 'strict' mode
+    if (behavior === 'strict') {
+      return role.roleLang || 'en';
+    }
+    
+    return behavior || 'auto';
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* ❌ Удален RML Identity Card */}
-
       {/* Role Name */}
       <div className="space-y-2">
         <Label htmlFor="roleName" className="text-sm sm:text-base font-semibold">
@@ -97,9 +127,9 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
           <Label htmlFor="version" className="text-sm sm:text-base font-semibold">Version *</Label>
           <Input
             id="version"
-            value={role.version || '0.9.0'}
+            value={role.version || '1.1.0'}
             onChange={(e) => onChange({ version: e.target.value })}
-            placeholder="0.9.0"
+            placeholder="1.0.0"
             className="text-sm sm:text-base font-mono"
           />
           <div className="text-xs text-muted-foreground">
@@ -108,7 +138,7 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
         </div>
       </div>
 
-      {/* Category */}
+      {/* Category - FIXED */}
       <div className="space-y-2">
         <Label htmlFor="category" className="text-sm sm:text-base font-semibold">Category *</Label>
         <Select
@@ -128,23 +158,6 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
             ))}
           </SelectContent>
         </Select>
-      </div>
-
-      {/* Tags */}
-      <div className="space-y-2">
-        <Label htmlFor="tags" className="text-sm sm:text-base font-semibold">
-          Tags
-        </Label>
-        <Input
-          id="tags"
-          value={role.tags?.join(', ') || ''}
-          onChange={(e) => updateTags(e.target.value)}
-          placeholder="coaching, career, productivity, goals"
-          className="text-sm sm:text-base"
-        />
-        <div className="text-xs text-muted-foreground">
-          Separate with commas: tag1, tag2, tag3
-        </div>
       </div>
 
       {/* Archetype */}
@@ -188,7 +201,7 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
         </div>
       </div>
 
-      {/* Description */}
+      {/* Description - FIXED with character counter */}
       <div className="space-y-2">
         <Label htmlFor="description" className="text-sm sm:text-base font-semibold">
           {t('description')} *
@@ -203,7 +216,7 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
           className="text-sm sm:text-base resize-none"
         />
         <div className="text-xs text-muted-foreground text-right">
-          {role.description.length}/250 {t('charactersRemaining')}
+          {role.description.length}/250 characters remaining
         </div>
       </div>
 
@@ -222,24 +235,42 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
         />
       </div>
 
-      {/* Language Settings */}
+      {/* Tags */}
+      <div className="space-y-2">
+        <Label htmlFor="tags" className="text-sm sm:text-base font-semibold">
+          Tags
+        </Label>
+        <Input
+          id="tags"
+          value={role.tags?.join(', ') || ''}
+          onChange={(e) => updateTags(e.target.value)}
+          placeholder="coaching, career, productivity, goals"
+          className="text-sm sm:text-base"
+        />
+        <div className="text-xs text-muted-foreground">
+          Separate with commas: tag1, tag2, tag3
+        </div>
+      </div>
+
+      {/* Language Settings - NEW VERSION */}
       <div className="space-y-4 p-4 border border-border rounded-lg bg-muted/30">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg">🌐</span>
           <h3 className="text-sm sm:text-base font-semibold">Language Settings</h3>
+          <InfoIcon className="h-4 w-4 text-muted-foreground" />
         </div>
-        
-        {/* Primary Language */}
+
+        {/* Primary Language (ROLE_LANG) */}
         <div className="space-y-2">
-          <Label htmlFor="roleLang" className="text-sm">
-            Primary Language
-            <span className="ml-1 text-xs text-muted-foreground">(Language the role content is written in)</span>
+          <Label className="text-sm">
+            Primary Language (ROLE_LANG)
+            <span className="ml-1 text-xs text-muted-foreground">(Language of role content and greeting)</span>
           </Label>
           <Select
             value={role.roleLang || 'en'}
             onValueChange={(value) => onChange({ roleLang: value as Language })}
           >
-            <SelectTrigger id="roleLang" className="text-sm">
+            <SelectTrigger className="text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -253,11 +284,60 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
           </Select>
         </div>
 
+        {/* Response Language (RESPONSE_LANG) - NEW TEXT INPUT */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">
+            Response Language (RESPONSE_LANG)
+            <span className="ml-1 text-xs text-muted-foreground font-normal">
+              (Language(s) for AI responses)
+            </span>
+          </Label>
+          <Input
+            value={getResponseLangDisplay()}
+            onChange={(e) => handleResponseLangChange(e.target.value)}
+            placeholder="auto"
+            className="text-sm font-mono"
+          />
+          <div className="space-y-1 text-xs text-muted-foreground">
+            <p className="font-medium">Accepted values:</p>
+            <ul className="list-disc list-inside space-y-0.5 ml-2">
+              <li><code className="bg-muted px-1 rounded">auto</code> — Auto-detect user's language</li>
+              <li><code className="bg-muted px-1 rounded">match</code> — Mirror user's language exactly</li>
+              <li><code className="bg-muted px-1 rounded">flexible</code> — Switch on explicit user request</li>
+              <li><code className="bg-muted px-1 rounded">en</code>, <code className="bg-muted px-1 rounded">ua</code>, <code className="bg-muted px-1 rounded">es</code>, <code className="bg-muted px-1 rounded">zh</code>, <code className="bg-muted px-1 rounded">fr</code>, <code className="bg-muted px-1 rounded">de</code> — Always use specific language</li>
+              <li><code className="bg-muted px-1 rounded">en, ua</code> — Bilingual (for language teachers, translators)</li>
+            </ul>
+          </div>
+          
+          {/* Examples based on current value */}
+          {role.responseBehavior && (
+            <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-200 dark:border-blue-800">
+              <p className="text-xs font-medium text-blue-900 dark:text-blue-100 mb-1">
+                Current setup:
+              </p>
+              <p className="text-xs text-blue-700 dark:text-blue-300">
+                {role.responseBehavior === 'auto' && (
+                  <>ROLE_LANG: <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">{role.roleLang || 'en'}</code> → AI adapts to user language automatically</>
+                )}
+                {role.responseBehavior === 'match' && (
+                  <>ROLE_LANG: <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">{role.roleLang || 'en'}</code> → AI mirrors user's language exactly</>
+                )}
+                {role.responseBehavior === 'flexible' && (
+                  <>ROLE_LANG: <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">{role.roleLang || 'en'}</code> → AI switches only when user requests</>
+                )}
+                {!['auto', 'match', 'flexible', 'strict'].includes(role.responseBehavior) && (
+                  <>ROLE_LANG: <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">{role.roleLang || 'en'}</code> → AI always responds in <code className="bg-blue-100 dark:bg-blue-900 px-1 rounded">{role.responseBehavior}</code></>
+                )}
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Supported Languages */}
         <div className="space-y-2">
           <Label className="text-sm">
             Supported Languages
-            <span className="ml-1 text-xs text-muted-foreground">(Languages the role can respond in)</span>
+            <span className="ml-1 text-xs text-muted-foreground">(Languages the role can understand and respond in)</span>
           </Label>
           <Input
             value={(role.supportedLanguages || ['en', 'ua']).join(', ')}
@@ -276,53 +356,6 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
           </p>
         </div>
 
-        {/* Response Behavior */}
-        <div className="space-y-2">
-          <Label className="text-sm">Response Behavior</Label>
-          <RadioGroup
-            value={role.responseBehavior || 'auto'}
-            onValueChange={(value) => onChange({ responseBehavior: value as ResponseBehavior })}
-            className="space-y-2"
-          >
-            <div className="flex items-start space-x-2">
-              <RadioGroupItem value="auto" id="auto" className="mt-0.5" />
-              <Label htmlFor="auto" className="text-sm font-normal cursor-pointer">
-                <span className="font-medium">Auto-detect</span>
-                <span className="block text-xs text-muted-foreground">
-                  Automatically detect and respond in user's language
-                </span>
-              </Label>
-            </div>
-            <div className="flex items-start space-x-2">
-              <RadioGroupItem value="match" id="match" className="mt-0.5" />
-              <Label htmlFor="match" className="text-sm font-normal cursor-pointer">
-                <span className="font-medium">Match user</span>
-                <span className="block text-xs text-muted-foreground">
-                  Always respond in the same language as user's message
-                </span>
-              </Label>
-            </div>
-            <div className="flex items-start space-x-2">
-              <RadioGroupItem value="strict" id="strict" className="mt-0.5" />
-              <Label htmlFor="strict" className="text-sm font-normal cursor-pointer">
-                <span className="font-medium">Primary only</span>
-                <span className="block text-xs text-muted-foreground">
-                  Always respond in primary language regardless of user's language
-                </span>
-              </Label>
-            </div>
-            <div className="flex items-start space-x-2">
-              <RadioGroupItem value="flexible" id="flexible" className="mt-0.5" />
-              <Label htmlFor="flexible" className="text-sm font-normal cursor-pointer">
-                <span className="font-medium">Flexible</span>
-                <span className="block text-xs text-muted-foreground">
-                  Switch language when user explicitly requests
-                </span>
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
-
         {/* Allow Language Switch */}
         <div className="flex items-start space-x-2">
           <input
@@ -335,7 +368,7 @@ export const Step1Base: React.FC<Step1BaseProps> = ({ role, onChange }) => {
           <Label htmlFor="allowLanguageSwitch" className="text-sm font-normal cursor-pointer">
             Allow user to change language during conversation
             <span className="block text-xs text-muted-foreground">
-              User can ask to switch languages (e.g., "Please continue in English")
+              User can request language switch (e.g., "Please continue in English")
             </span>
           </Label>
         </div>

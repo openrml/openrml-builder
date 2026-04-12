@@ -28,7 +28,7 @@ import { Step7Memory } from './steps/Step7Memory';
 import { Step8Ethics } from './steps/Step8Ethics';
 import { LivePreview } from './LivePreview';
 import { ImportModal } from './ImportModal';
-import { ExportMenu } from './ExportMenu';
+import { ExportMenu } from './ExportMenuV1_1';
 
 export const Constructor: React.FC = () => {
   const { t } = useLanguage();
