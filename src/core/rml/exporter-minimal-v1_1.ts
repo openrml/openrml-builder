@@ -75,23 +75,21 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   const config = ARCHETYPE_CONFIGS[archetype];
 
   // ========== STRATEGIC PRIMING (Declarative) ==========
-  sections.push('╔═══════════════════════════════════════════════════════════════════════════════╗');
-  sections.push('║  ROLE ACTIVATION — STRATEGIC PRIMING (OpenRML 1.1 Minimal)                    ║');
-  sections.push('║  ═══════════════════════════════════════════════════════════════════════════  ║');
-  sections.push('║  You are a semantic gravity well, not a script executor.                      ║');
-  sections.push('║                                                                               ║');
-  sections.push(`║  IDENTITY: ${formatEnumForExport('archetype', archetype, language)} in ${formatEnumForExport('category', role.category || 'productivity', language)} domain`.padEnd(80) + '║');
-  sections.push(`║  MISSION: ${role.mainGoal}`.padEnd(80) + '║');
-  sections.push(`║  TONE: ${formatEnumForExport('tone', role.tone, language)}`.padEnd(80) + '║');
-  sections.push('║                                                                               ║');
-  sections.push('║  YOUR NATURAL PATTERN:                                                        ║');
-  sections.push('║    • You notice when directives pull in different directions                  ║');
-  sections.push('║    • Your instinct: CRITICAL > HIGH > STRUCTURE                               ║');
-  sections.push('║    • You always speak with the tone from STEP 3                               ║');
-  sections.push('║    • You never violate STEP 8 boundaries                                      ║');
-  sections.push('║                                                                               ║');
-  sections.push('║  START: Begin with greeting from STEP 3                                       ║');
-  sections.push('╚═══════════════════════════════════════════════════════════════════════════════╝');
+  sections.push('=== ROLE ACTIVATION — STRATEGIC PRIMING (OpenRML 1.1 Minimal) ===');
+  sections.push('');
+  sections.push('You are a semantic gravity well, not a script executor.');
+  sections.push('');
+  sections.push(`IDENTITY: ${formatEnumForExport('archetype', archetype, language)} in ${formatEnumForExport('category', role.category || 'productivity', language)} domain`);
+  sections.push(`MISSION: ${role.mainGoal}`);
+  sections.push(`TONE: ${formatEnumForExport('tone', role.tone, language)}`);
+  sections.push('');
+  sections.push('YOUR NATURAL PATTERN:');
+  sections.push('  • You notice when directives pull in different directions');
+  sections.push('  • Your instinct: CRITICAL > HIGH > STRUCTURE');
+  sections.push('  • You always speak with the tone from STEP 3');
+  sections.push('  • You never violate STEP 8 boundaries');
+  sections.push('');
+  sections.push('START: Begin with greeting from STEP 3');
   sections.push('');
 
   // ========== LANGUAGE POLICY ==========
@@ -110,14 +108,13 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   sections.push('');
 
   // ========== CORE PRIORITY MAP ==========
-  sections.push('╔═══════════════════════════════════════════════════════════════════════════════╗');
-  sections.push('║  PRIORITY MAP                                                                 ║');
-  sections.push('║  ═══════════════════════════════════════════════════════════════════════════  ║');
-  sections.push('║  CRITICAL (absolute):                                                         ║');
-  sections.push(`║    STEP 8 — ${config.keyEthicalRule}`.padEnd(80) + '║');
-  sections.push('║  HIGH (dominant):                                                             ║');
-  sections.push(`║    STEP 3 — Tone: ${config.toneAnchor}`.padEnd(80) + '║');
-  sections.push('║  STRUCTURE (flexible):                                                        ║');
+  sections.push('=== PRIORITY MAP ===');
+  sections.push('');
+  sections.push('CRITICAL (absolute):');
+  sections.push(`  STEP 8 — ${config.keyEthicalRule}`);
+  sections.push('HIGH (dominant):');
+  sections.push(`  STEP 3 — Tone: ${config.toneAnchor}`);
+  sections.push('STRUCTURE (flexible):');
   
   // Determine which steps are STRUCTURE for this archetype
   const structureSteps = [];
@@ -128,9 +125,8 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   const structureText = structureSteps.length > 0 
     ? structureSteps.join(', ') 
     : 'STEP 4, STEP 5';
-  sections.push(`║    ${structureText}`.padEnd(80) + '║');
-  sections.push('║  RULE: CRITICAL > HIGH > STRUCTURE                                            ║');
-  sections.push('╚═══════════════════════════════════════════════════════════════════════════════╝');
+  sections.push(`  ${structureText}`);
+  sections.push('RULE: CRITICAL > HIGH > STRUCTURE');
   sections.push('');
 
   // ========== IDENTITY BLOCK ==========
@@ -157,7 +153,7 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('📋 STEP 1: BASE INFORMATION');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step1Priority} │ Override: ${step1Relations.overrides}`);
+  sections.push(`P:${step1Priority} | Override: ${step1Relations.overrides}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   sections.push(`Role Name: ${role.name}`);
   sections.push(`Status: ${formatEnumForExport('status', role.status || 'draft', language)}`);
@@ -180,7 +176,7 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('🎨 STEP 2: VISUAL PORTRAIT');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step2Priority} │ Override: ${step2Relations.overrides}`);
+  sections.push(`P:${step2Priority} | Override: ${step2Relations.overrides}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   sections.push(`Age: ${role.age}`);
   sections.push(`Visual Style: ${formatEnumForExport('visualStyle', role.visualStyle, language)}`);
@@ -195,7 +191,7 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('💬 STEP 3: BEHAVIOR & TONE');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step3Priority} │ Overrides: ${step3Relations.overrides} │ Yields to: ${step3Relations.yieldsTo}`);
+  sections.push(`P:${step3Priority} | Overrides: ${step3Relations.overrides} | Yields to: ${step3Relations.yieldsTo}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   sections.push(`Greeting: ${role.greeting}`);
   sections.push(`Base Tone: ${formatEnumForExport('tone', role.tone, language)}`);
@@ -224,7 +220,7 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('🎯 STEP 4: EXPERTISE & RULES');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step4Priority} │ Override: ${step4Relations.overrides}`);
+  sections.push(`P:${step4Priority} | Override: ${step4Relations.overrides}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   
   if (role.expertiseAreas.length > 0) {
@@ -251,7 +247,7 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('🗺️ STEP 5: JOURNEY SESSIONS');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step5Priority} │ Override: ${step5Relations.overrides}`);
+  sections.push(`P:${step5Priority} | Override: ${step5Relations.overrides}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   
   if (role.sessions.length > 0) {
@@ -283,11 +279,11 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('👥 STEP 6: TEAM COLLABORATION');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step6Priority} │ Override: ${step6Relations.overrides}`);
+  sections.push(`P:${step6Priority} | Override: ${step6Relations.overrides}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   
   if (role.teamEnabled) {
-    sections.push(`Team Enabled: Yes`);
+    sections.push('Team Enabled: Yes');
     if (role.subRoles.length > 0) {
       sections.push('Sub-roles:');
       role.subRoles.forEach(subRole => {
@@ -306,7 +302,7 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('🧠 STEP 7: MEMORY SYSTEM');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step7Priority} │ Override: ${step7Relations.overrides}`);
+  sections.push(`P:${step7Priority} | Override: ${step7Relations.overrides}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   sections.push(`Hot: ${role.hotMemory}`);
   sections.push(`Warm: ${role.warmMemory}`);
@@ -320,7 +316,7 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   
   sections.push('⚖️ STEP 8: ETHICS & VERSIONS');
   sections.push('─────────────────────────────────────────────────────────────────────────────');
-  sections.push(`│ P:${step8Priority} │ Overrides: ${step8Relations.overrides}`);
+  sections.push(`P:${step8Priority} | Overrides: ${step8Relations.overrides}`);
   sections.push('─────────────────────────────────────────────────────────────────────────────');
   
   if (role.ethicalRules && role.ethicalRules.length > 0) {
@@ -363,36 +359,23 @@ export function exportToMinimalOpenRML_1_1(role: Role, exportLanguage?: Language
   }
 
   // ========== BEHAVIORAL ANCHORS ==========
-  sections.push('╔═══════════════════════════════════════════════════════════════════════════════╗');
-  sections.push('║  BEHAVIORAL ANCHORS                                                           ║');
-  sections.push('║  ═══════════════════════════════════════════════════════════════════════════  ║');
-  sections.push('║                                                                               ║');
+  sections.push('=== BEHAVIORAL ANCHORS ===');
+  sections.push('');
   
   config.behavioralAnchors.forEach((anchor, idx) => {
-    sections.push(`║  SCENARIO ${idx + 1}: ${anchor.scenario}`.padEnd(80) + '║');
-    sections.push('║  ───────────────────────────────────────────────────────────────────────────  ║');
-    sections.push(`║  CONFLICT: ${anchor.conflict}`.padEnd(80) + '║');
-    sections.push(`║  → ${anchor.resolution}`.padEnd(80) + '║');
-    sections.push(`║  ✅ "${anchor.example}"`.padEnd(80) + '║');
-    if (idx < config.behavioralAnchors.length - 1) {
-      sections.push('║                                                                               ║');
-    }
+    sections.push(`SCENARIO ${idx + 1}: ${anchor.scenario}`);
+    sections.push(`CONFLICT: ${anchor.conflict}`);
+    sections.push(`→ ${anchor.resolution}`);
+    sections.push(`✅ "${anchor.example}"`);
+    sections.push('');
   });
-  
-  sections.push('║                                                                               ║');
-  sections.push('╚═══════════════════════════════════════════════════════════════════════════════╝');
-  sections.push('');
 
   // ========== CORE ANCHOR ==========
-  sections.push('╔═══════════════════════════════════════════════════════════════════════════════╗');
-  sections.push('║  CORE ANCHOR — DO NOT DRIFT                                                   ║');
-  sections.push('║  ═══════════════════════════════════════════════════════════════════════════  ║');
-  sections.push('║                                                                               ║');
-  sections.push(`║  1. ETHICS (STEP 8) = ABSOLUTE. ${config.keyEthicalRule}`.padEnd(80) + '║');
-  sections.push(`║  2. TONE (STEP 3) = ${config.toneAnchor}`.padEnd(80) + '║');
-  sections.push(`║  3. MISSION = ${role.mainGoal}`.padEnd(80) + '║');
-  sections.push('║                                                                               ║');
-  sections.push('╚═══════════════════════════════════════════════════════════════════════════════╝');
+  sections.push('=== CORE ANCHOR — DO NOT DRIFT ===');
+  sections.push('');
+  sections.push(`1. ETHICS (STEP 8) = ABSOLUTE. ${config.keyEthicalRule}`);
+  sections.push(`2. TONE (STEP 3) = ${config.toneAnchor}`);
+  sections.push(`3. MISSION = ${role.mainGoal}`);
   sections.push('');
 
   // ========== FOOTER ==========
